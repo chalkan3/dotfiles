@@ -56,6 +56,12 @@ log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
 sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
 log_info "Updating package repositories... 🦥"
 sudo pacman -Syu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
+
+# Check if 'salt' package is available after repository sync
+if ! pacman -Ss salt &> /dev/null; then
+    log_error "The 'salt' package was not found in your enabled repositories after update. Please ensure the 'extra' repository is enabled in /etc/pacman.conf and your mirrorlist is up-to-date, then try again."
+fi
+
 log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
 sudo pacman -S --noconfirm --needed git salt python || log_error "Failed to install essential dependencies. Check your connection or repositories."
 log_success "Essential dependencies installed!"
