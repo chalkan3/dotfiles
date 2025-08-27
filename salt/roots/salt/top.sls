@@ -4,3 +4,4 @@ base:
     - user
     - lvim
     - dotfiles
+    - test

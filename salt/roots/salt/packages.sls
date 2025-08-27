@@ -18,3 +18,5 @@ core_packages:
       - neovim
       - fzf
       - glab
+      - pytest
+      - python-testinfra

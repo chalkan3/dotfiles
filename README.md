@@ -131,6 +131,16 @@ sudo salt-call --local --config-dir="~/dotfiles/salt" state.apply
 
 ---
 
+## ✅ Automated Testing
+
+This project includes automated tests using **Testinfra** (built on `pytest`) to ensure the system is configured as expected after the Salt states are applied.
+
+*   Tests are located in the `tests/` directory.
+*   They verify user creation, package installations, command availability, and `stow` symlinks.
+*   Tests are automatically executed as the final step of the `install.sh` script.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
