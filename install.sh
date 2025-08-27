@@ -23,7 +23,8 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
+${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -54,6 +55,9 @@ log_success "Sudo access confirmed!"
 log_step "Installing Essential Dependencies (Git, Salt, Python)"
 log_info "Ensuring gnupg is installed for pacman-key..."
 sudo pacman -S --noconfirm --needed gnupg || log_error "Failed to install gnupg. This is required for pacman-key."
+
+log_info "Ensuring haveged is installed for entropy..."
+sudo pacman -S --noconfirm --needed haveged || log_warn "Failed to install haveged. Keyring operations might be slow or fail due to low entropy."
 
 log_info "==> Step 1 of 4: Initializing pacman keyring..."
 sudo rm -rf /etc/pacman.d/gnupg || log_warn "Could not remove existing pacman keyring directory. Proceeding anyway."
@@ -124,7 +128,8 @@ sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar fi
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------${RESET}"
+echo -e "${GREEN}--------------------------------------------------------------------
+${RESET}"
 log_step "NEXT STEPS: What to do now?"
 
 log_info "1. Set a password for your new user: ${NEW_USERNAME}"
@@ -136,4 +141,5 @@ echo -e "${YELLOW}   You can switch user in your current terminal or log out and
 log_info "3. Open a new terminal (or restart your shell)"
 echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
 
-echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
+echo -e "\n${GREEN}--------------------------------------------------------------------
+${RESET}"
