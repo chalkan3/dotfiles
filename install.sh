@@ -57,7 +57,9 @@ sudo pacman-key --init || log_error "Failed to initialize pacman keyring."
 log_info "Populating pacman keyring with Arch Linux keys..."
 sudo pacman-key --populate archlinux || log_error "Failed to populate pacman keyring."
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
-sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
+sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]
+#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]
+Include = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
 log_info "Updating package repositories... 🦥"
 sudo pacman -Syu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 
