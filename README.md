@@ -11,7 +11,7 @@ Welcome to my personal Arch Linux dotfiles repository! This project aims to prov
 This repository sets up a highly personalized and functional Arch Linux environment, including:
 
 *   **Automated User Creation:** Securely creates a dedicated user (`chalkan3`) during setup.
-*   **Essential System Dependencies:** Installs core packages like `git`, `zsh`, `kitty`, `zellij`, `neovim`, `ruby`, `nodejs`, `python`, `fzf`, `glab`, and more.
+*   **Essential System Dependencies:** Installs core packages like `git`, `zsh`, `kitty`, `zellij`, `neovim`, `ruby`, `nodejs`, `python`, `fzf`, `glab`, and a comprehensive suite of sysadmin tools (e.g., `nmap`, `htop`, `jq`, `lvm2`, `tcpdump`, `ripgrep`).
 *   **Security Hardening:** Configures `UFW` firewall and hardens `SSH` for a more secure system.
 *   **Zsh Configuration:** Sets up `zsh` with `Powerlevel10k` theme, `zsh-syntax-highlighting`, `zsh-autosuggestions`, and other productivity plugins via `Zinit`.
 *   **Terminal Emulator:** Configures `Kitty` with custom themes and settings.

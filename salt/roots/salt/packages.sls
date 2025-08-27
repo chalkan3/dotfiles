@@ -23,3 +23,19 @@ core_packages:
       - openssh
       - ufw
       - audit
+      - nmap
+      - tcpdump
+      - mtr
+      - bind-tools
+      - net-tools
+      - htop
+      - iotop
+      - sysstat
+      - lvm2
+      - parted
+      - ncdu
+      - jq
+      - yq
+      - bat
+      - fd
+      - ripgrep
