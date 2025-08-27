@@ -69,17 +69,7 @@ log_info ">=> Step 3 of 4: Refreshing server keys (this may take a while)..."
 sudo pacman-key --refresh-keys --verbose || log_warn "Failed to refresh pacman keys. This might cause issues with some packages."
 
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
-if grep -q '^#\[extra\]$' /etc/pacman.conf; then
-    sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
-else
-    log_info "'extra' repository already enabled. Skipping."
-fi
-
-if grep -q '\[extra\]' /etc/pacman.conf; then
-    log_success "'extra' repository confirmed as enabled in pacman.conf."
-else
-    log_error "'extra' repository is NOT enabled in pacman.conf after attempt. Please check /etc/pacman.conf manually."
-fi
+sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
 
 log_info ">=> Step 4 of 4: Forcing package and system update..."
 sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
@@ -87,7 +77,7 @@ sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositorie
 # Check if 'salt' package is available after repository sync
 if ! pacman -Ss salt &> /dev/null;
 then
-    log_error "The 'salt' package was not found in your enabled repositories after update. This is critical. Please ensure your /etc/pacman.conf and /etc/pacman.d/mirrorlist are correct and working, then try again."
+    log_error "The 'salt' package was not found in your enabled repositories after update. Please ensure the 'extra' repository is enabled in /etc/pacman.conf and your mirrorlist is up-to-date, then try again."
 fi
 
 log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
