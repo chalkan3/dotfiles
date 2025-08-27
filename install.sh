@@ -23,7 +23,8 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
+${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -52,14 +53,24 @@ fi
 log_success "Sudo access confirmed!"
 
 log_step "Installing Essential Dependencies (Git, Salt, Python)"
-log_info "Initializing pacman keyring..."
-sudo pacman-key --init || log_error "Failed to initialize pacman keyring."
-log_info "Populating pacman keyring with Arch Linux keys..."
-sudo pacman-key --populate archlinux || log_error "Failed to populate pacman keyring."
+log_info "Ensuring dirmngr is installed for pacman-key..."
+sudo pacman -S --noconfirm --needed dirmngr || log_error "Failed to install dirmngr."
+
+log_info "==> Step 1 of 4: Initializing pacman keyring..."
+sudo rm -rf /etc/pacman.d/gnupg || log_warn "Could not remove existing pacman keyring directory. Proceeding anyway."
+sudo pacman-key --init --verbose || log_error "Failed to initialize pacman keyring. Check permissions of /etc/pacman.d/"
+
+log_info "==> Step 2 of 4: Populating keyring with Arch Linux default keys..."
+sudo pacman-key --populate archlinux --verbose || log_error "Failed to populate pacman keyring."
+
+log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)..."
+sudo pacman-key --refresh-keys --verbose || log_warn "Failed to refresh pacman keys. This might cause issues with some packages."
+
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
 sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
-log_info "Updating package repositories... 🦥"
-sudo pacman -Syu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
+
+log_info "==> Step 4 of 4: Forcing package and system update..."
+sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 
 # Check if 'salt' package is available after repository sync
 if ! pacman -Ss salt &> /dev/null;
@@ -118,12 +129,12 @@ echo -e "${GREEN}---------------------------------------------------------------
 log_step "NEXT STEPS: What to do now?"
 
 log_info "1. Set a password for your new user: ${NEW_USERNAME}"
-echo -e "   sudo passwd ${NEW_USERNAME}${RESET}"
+echo -e "${CYAN}   sudo passwd ${NEW_USERNAME}${RESET}"
 
 log_info "2. Log in as ${NEW_USERNAME}"
-echo -e "   You can switch user in your current terminal or log out and log back in.${RESET}"
+echo -e "${YELLOW}   You can switch user in your current terminal or log out and log back in.${RESET}"
 
 log_info "3. Open a new terminal (or restart your shell)"
-echo -e "   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
+echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
 
 echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
