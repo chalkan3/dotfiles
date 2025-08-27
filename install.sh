@@ -68,87 +68,12 @@ fi
 log_info "==> Step 2 of 4: Populating keyring with Arch Linux default keys..."
 sudo pacman-key --populate archlinux --verbose || log_error "Failed to populate pacman keyring."
 
-log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)..."
+log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)...
+"
 sudo pacman-key --refresh-keys --verbose || log_warn "Failed to refresh pacman keys. This might cause issues with some packages."
 
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
 if grep -q '^#\[extra\]
-
-# Check if 'salt' package is available after repository sync
-if ! pacman -Ss salt &> /dev/null;
-then
-    log_error "The 'salt' package was not found in your enabled repositories after update. Please ensure the 'extra' repository is enabled in /etc/pacman.conf and your mirrorlist is up-to-date, then try again."
-fi
-
-log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
-sudo pacman -S --noconfirm --needed git salt python || log_error "Failed to install essential dependencies. Check your connection or repositories."
-log_success "Essential dependencies installed!"
-
-log_step "Cloning Your Dotfiles Repository"
-if [ ! -d "$DOTFILES_DIR" ]; then
-    log_info "Creating home directory for ${NEW_USERNAME} and adjusting permissions..."
-    sudo mkdir -p "/home/${NEW_USERNAME}" || log_error "Failed to create home directory for ${NEW_USERNAME}."
-    sudo chown "${NEW_USERNAME}":"${NEW_USERNAME}" "/home/${NEW_USERNAME}" || log_error "Failed to adjust permissions for ${NEW_USERNAME}."
-    
-    log_info "Cloning dotfiles repository to ${DOTFILES_DIR}... 🦥"
-    sudo -u "${NEW_USERNAME}" git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
-    log_success "Dotfiles repository cloned successfully!"
-else
-    log_warn "Dotfiles repository already exists in ${DOTFILES_DIR}. Skipping clone."
-fi
-
-log_step "Preparing Temporary Pillar for Salt"
-log_info "Setting up temporary Pillar for secure user creation..."
-TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
-TEMP_PILLAR_FILE="${TEMP_PILLAR_DIR}/user.sls"
-
-sudo mkdir -p "$TEMP_PILLAR_DIR" || log_error "Failed to create temporary Pillar directory."
-sudo chmod 700 "$TEMP_PILLAR_DIR" || log_error "Failed to adjust permissions for temporary directory."
-
-# Write the temporary Pillar file with an empty password hash
-# User will be created without a password, and instructed to set it manually.
-USER_PASSWORD_HASH="!"
-
-sudo bash -c "cat > \"$TEMP_PILLAR_FILE\" <<EOF
-user_password: '$USER_PASSWORD_HASH'
-EOF" || log_error "Failed to write temporary Pillar file."
-
-sudo chmod 600 "$TEMP_PILLAR_FILE" || log_error "Failed to adjust permissions for temporary Pillar file."
-log_success "Temporary Pillar prepared!"
-
-log_step "Applying Salt States (Main Configuration)"
-log_info "Salt is now configuring your system and running tests. Observe the output for test progress... 🦥"
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states or tests failed. Check logs above."
-log_success "Salt states applied successfully and all tests passed! Your environment is almost ready!"
-
-log_step "Finalizing and Cleaning Up"
-log_info "Removing temporary Pillar files..."
-sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar files. Manual cleanup might be needed."
-log_success "Cleanup complete!"
-
-echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------
-${RESET}"
-log_step "NEXT STEPS: What to do now?"
-
-log_info "1. Set a password for your new user: ${NEW_USERNAME}"
-echo -e "${CYAN}   sudo passwd ${NEW_USERNAME}${RESET}"
-
-log_info "2. Log in as ${NEW_USERNAME}"
-echo -e "${YELLOW}   You can switch user in your current terminal or log out and log back in.${RESET}"
-
-log_info "3. Open a new terminal (or restart your shell)"
-echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
-
-echo -e "\n${GREEN}--------------------------------------------------------------------
-${RESET}" /etc/pacman.conf; then
-    sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
-else
-    log_info "'extra' repository already enabled. Skipping."
-fi
-
-log_info "==> Step 4 of 4: Forcing package and system update..."
-sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 
 # Check if 'salt' package is available after repository sync
 if ! pacman -Ss salt &> /dev/null;
