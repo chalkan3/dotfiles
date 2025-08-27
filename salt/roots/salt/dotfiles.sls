@@ -4,10 +4,10 @@
 dotfiles_repo:
   git.latest:
     - name: https://github.com/chalkan3/dotfiles.git
-    - target: /home/igor/dotfiles
-    - user: igor
+    - target: /home/chalkan3/dotfiles
+    - user: chalkan3
     - require:
-      - user: igor_user
+      - user: chalkan3_user
       - pkg: core_packages
 
 # List of stow packages (must match directory names in the dotfiles repo)
@@ -20,8 +20,8 @@ stow_dotfiles:
       {% for package in stow_packages %}
       - stow {{ package }}
       {% endfor %}
-    - cwd: /home/igor/dotfiles
-    - runas: igor
+    - cwd: /home/chalkan3/dotfiles
+    - runas: chalkan3
     - require:
       - git: dotfiles_repo
       - pkg: core_packages

@@ -1,11 +1,12 @@
 # State to ensure the user exists
 
-igor_user:
+chalkan3_user:
   user.present:
-    - name: igor
+    - name: chalkan3
     - shell: /bin/zsh
-    - home: /home/igor
-    # Garante que o usuário está no grupo 'wheel' para ter acesso sudo
-    # Adapte os grupos conforme sua necessidade
+    - home: /home/chalkan3
     - groups:
       - wheel
+    - passwd: {{ pillar.user_password }}
+    - require:
+      - pkg: core_packages # Ensure zsh is installed before setting as shell
