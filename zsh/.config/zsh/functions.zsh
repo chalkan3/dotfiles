@@ -122,3 +122,10 @@ search-edit() {
       --bind "change:reload(rg --line-number --no-heading --color=always {q} . || true)" \
       --bind "enter:execute(lvim {1} +{2})"
 }
+
+# Source SaltStack functions
+source "${ZSH_CONFIG_DIR}/functions/salt.zsh"
+
+# Source Dotfiles update functions
+source "${ZSH_CONFIG_DIR}/functions/dotfiles_update.zsh"
+
