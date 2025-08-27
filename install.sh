@@ -9,28 +9,9 @@ DOTFILES_DIR="/home/${NEW_USERNAME}/dotfiles"
 
 # --- Check for sudo access ---
 echo "Checking for sudo access..."
-if ! sudo -v; then
+if ! sudo -v;
+    then
     echo "Sudo access is required. Please run this script with a user that has sudo privileges."
-    exit 1
-fi
-
-# --- Prompt for User Password ---
-read -s -p "Enter password for user ${NEW_USERNAME}: " USER_PASSWORD
-echo
-read -s -p "Confirm password for user ${NEW_USERNAME}: " USER_PASSWORD_CONFIRM
-echo
-
-if [ "$USER_PASSWORD" != "$USER_PASSWORD_CONFIRM" ]; then
-    echo "Passwords do not match. Exiting."
-    exit 1
-fi
-
-# Generate password hash (SHA512)
-# Requires python-passlib or similar for crypt.crypt to work with METHOD_SHA512
-# On Arch, python-passlib is usually not needed for crypt.crypt
-USER_PASSWORD_HASH=$(python -c "import crypt; print(crypt.crypt('$USER_PASSWORD', crypt.METHOD_SHA512))" 2>/dev/null)
-if [ -z "$USER_PASSWORD_HASH" ]; then
-    echo "Error generating password hash. Ensure Python's crypt module supports SHA512."
     exit 1
 fi
 
@@ -50,14 +31,21 @@ else
     echo "Dotfiles repository already exists. Skipping clone."
 fi
 
-# --- Prepare Temporary Pillar for Salt ---
+# --- Prepare Temporary Pillar for Salt (No Password) ---
+# User will be created without a password, and instructed to set it manually.
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
 TEMP_PILLAR_FILE="${TEMP_PILLAR_DIR}/user.sls"
 
 sudo mkdir -p "$TEMP_PILLAR_DIR"
 sudo chmod 700 "$TEMP_PILLAR_DIR"
 
-# Write the temporary Pillar file with the password hash
+# Write the temporary Pillar file with an empty password hash
+# Salt will create the user without a password, or with a disabled password.
+# The user will be prompted to set it after the script finishes.
+USER_PASSWORD_HASH="!"
+# Using '!' as a password hash typically means the password is disabled or not set.
+# Alternatively, one could use 'password_disabled: True' in user.sls if not using passwd field.
+
 sudo bash -c "cat > \"$TEMP_PILLAR_FILE\" <<EOF
 user_password: '$USER_PASSWORD_HASH'
 EOF"
@@ -72,5 +60,7 @@ sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PI
 sudo rm -rf "$TEMP_PILLAR_DIR"
 
 echo "
-Setup complete! Please log in as ${NEW_USERNAME} with the password you provided.
-"
+Setup complete! User ${NEW_USERNAME} has been created."
+echo "Please set a password for ${NEW_USERNAME} by running:"
+echo "  sudo passwd ${NEW_USERNAME}"
+echo "Then, you can log in as ${NEW_USERNAME} and restart your shell."
