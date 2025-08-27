@@ -125,7 +125,8 @@ sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar fi
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------${RESET}"
+echo -e "${GREEN}--------------------------------------------------------------------
+${RESET}"
 log_step "NEXT STEPS: What to do now?"
 
 log_info "1. Set a password for your new user: ${NEW_USERNAME}"
@@ -137,4 +138,5 @@ echo -e "${YELLOW}   You can switch user in your current terminal or log out and
 log_info "3. Open a new terminal (or restart your shell)"
 echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
 
-echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
+echo -e "\n${GREEN}--------------------------------------------------------------------
+${RESET}"
