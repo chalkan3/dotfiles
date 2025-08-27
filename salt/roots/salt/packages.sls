@@ -13,4 +13,8 @@ core_packages:
       - wget
       - nodejs
       - npm
+      - python
       - python-pip
+      - neovim
+      - fzf
+      - glab

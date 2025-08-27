@@ -7,4 +7,4 @@ install_lvim_from_script:
     - runas: igor
     - creates: /home/igor/.local/bin/lvim
     - require:
-      - pkg: core_packages
+      - pkg: lvim_dependencies
