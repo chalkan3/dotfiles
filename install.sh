@@ -23,8 +23,7 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
-${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -53,27 +52,24 @@ fi
 log_success "Sudo access confirmed!"
 
 log_step "Installing Essential Dependencies (Git, Salt, Python)"
-log_info "Ensuring dirmngr is installed for pacman-key..."
-sudo pacman -S --noconfirm --needed dirmngr || log_error "Failed to install dirmngr."
+log_info "Ensuring gnupg is installed for pacman-key..."
+sudo pacman -S --noconfirm --needed gnupg || log_error "Failed to install gnupg. This is required for pacman-key."
 
 log_info "==> Step 1 of 4: Initializing pacman keyring..."
-if ! sudo pacman-key --list-keys &> /dev/null; then
-    log_info "Pacman keyring not found or invalid. Initializing..."
-    sudo rm -rf /etc/pacman.d/gnupg || log_warn "Could not remove existing pacman keyring directory. Proceeding anyway."
-    sudo pacman-key --init --verbose || log_error "Failed to initialize pacman keyring. Check permissions of /etc/pacman.d/"
-else
-    log_info "Pacman keyring already initialized. Skipping."
-fi
+sudo rm -rf /etc/pacman.d/gnupg || log_warn "Could not remove existing pacman keyring directory. Proceeding anyway."
+sudo pacman-key --init --verbose || log_error "Failed to initialize pacman keyring. Check permissions of /etc/pacman.d/"
 
 log_info "==> Step 2 of 4: Populating keyring with Arch Linux default keys..."
 sudo pacman-key --populate archlinux --verbose || log_error "Failed to populate pacman keyring."
 
-log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)...
-"
+log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)..."
 sudo pacman-key --refresh-keys --verbose || log_warn "Failed to refresh pacman keys. This might cause issues with some packages."
 
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
-if grep -q '^#\[extra\]
+sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
+
+log_info "==> Step 4 of 4: Forcing package and system update..."
+sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 
 # Check if 'salt' package is available after repository sync
 if ! pacman -Ss salt &> /dev/null;
@@ -128,8 +124,7 @@ sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar fi
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------
-${RESET}"
+echo -e "${GREEN}--------------------------------------------------------------------${RESET}"
 log_step "NEXT STEPS: What to do now?"
 
 log_info "1. Set a password for your new user: ${NEW_USERNAME}"
@@ -141,5 +136,4 @@ echo -e "${YELLOW}   You can switch user in your current terminal or log out and
 log_info "3. Open a new terminal (or restart your shell)"
 echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
 
-echo -e "\n${GREEN}--------------------------------------------------------------------
-${RESET}"
+echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
