@@ -2,7 +2,7 @@
 
 run_testinfra_tests:
   cmd.run:
-    - name: pytest --verbose /home/chalkan3/dotfiles/tests/
+    - name: pytest --verbose --color=yes /home/chalkan3/dotfiles/tests/
     - cwd: /home/chalkan3/dotfiles
     - runas: chalkan3
     - require:

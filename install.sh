@@ -23,7 +23,8 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
+${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -32,7 +33,7 @@ cat << "EOF"
   _   _      _ _           _ _ _
  | | | | ___| | | ___  ___| | | |
  | |_| |/ _ \ | |/ _ \/ __| | | |
- |  _  |  __/ | |  __/<strong></strong>__ \ | | |
+ |  _  |  __/ | |  __/ __| | | |
  |_| |_|\___|_|_|\___||___/_|_|_|
 
   ${SLOTH_EMOJI}  Your Arch Linux environment, configured with care! ${SLOTH_EMOJI}
@@ -89,9 +90,9 @@ sudo chmod 600 "$TEMP_PILLAR_FILE" || log_error "Failed to adjust permissions fo
 log_success "Temporary Pillar prepared!"
 
 log_step "Applying Salt States (Main Configuration)"
-log_info "Salt is now configuring your system. This might take a while... 🦥"
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
-log_success "Salt states applied successfully! Your environment is almost ready!"
+log_info "Salt is now configuring your system and running tests. Observe the output for test progress... 🦥"
+sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states or tests failed. Check logs above."
+log_success "Salt states applied successfully and all tests passed! Your environment is almost ready!"
 
 log_step "Finalizing and Cleaning Up"
 log_info "Removing temporary Pillar files..."
