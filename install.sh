@@ -52,6 +52,8 @@ fi
 log_success "Sudo access confirmed!"
 
 log_step "Installing Essential Dependencies (Git, Salt, Python)"
+log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
+sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
 log_info "Updating package repositories... 🦥"
 sudo pacman -Syu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
