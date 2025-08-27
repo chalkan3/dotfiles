@@ -23,8 +23,7 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
-${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -59,26 +58,36 @@ sudo pacman -S --noconfirm --needed gnupg || log_error "Failed to install gnupg.
 log_info "Ensuring haveged is installed for entropy..."
 sudo pacman -S --noconfirm --needed haveged || log_warn "Failed to install haveged. Keyring operations might be slow or fail due to low entropy."
 
-log_info "==> Step 1 of 4: Initializing pacman keyring..."
+log_info ">=> Step 1 of 4: Initializing pacman keyring..."
 sudo rm -rf /etc/pacman.d/gnupg || log_warn "Could not remove existing pacman keyring directory. Proceeding anyway."
 sudo pacman-key --init --verbose || log_error "Failed to initialize pacman keyring. Check permissions of /etc/pacman.d/"
 
-log_info "==> Step 2 of 4: Populating keyring with Arch Linux default keys..."
+log_info ">=> Step 2 of 4: Populating keyring with Arch Linux default keys..."
 sudo pacman-key --populate archlinux --verbose || log_error "Failed to populate pacman keyring."
 
-log_info "==> Step 3 of 4: Refreshing server keys (this may take a while)..."
+log_info ">=> Step 3 of 4: Refreshing server keys (this may take a while)..."
 sudo pacman-key --refresh-keys --verbose || log_warn "Failed to refresh pacman keys. This might cause issues with some packages."
 
 log_info "Ensuring 'extra' repository is enabled in pacman.conf..."
-sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
+if grep -q '^#\[extra\]$' /etc/pacman.conf; then
+    sudo sed -i '/^#\[extra\]$/{N;s/#\[extra\]\n#Include = \/etc\/pacman.d\/mirrorlist/\[extra\]\nInclude = \/etc\/pacman.d\/mirrorlist/}' /etc/pacman.conf || log_error "Failed to enable 'extra' repository in pacman.conf."
+else
+    log_info "'extra' repository already enabled. Skipping."
+fi
 
-log_info "==> Step 4 of 4: Forcing package and system update..."
+if grep -q '\[extra\]' /etc/pacman.conf; then
+    log_success "'extra' repository confirmed as enabled in pacman.conf."
+else
+    log_error "'extra' repository is NOT enabled in pacman.conf after attempt. Please check /etc/pacman.conf manually."
+fi
+
+log_info ">=> Step 4 of 4: Forcing package and system update..."
 sudo pacman -Syyu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 
 # Check if 'salt' package is available after repository sync
 if ! pacman -Ss salt &> /dev/null;
 then
-    log_error "The 'salt' package was not found in your enabled repositories after update. Please ensure the 'extra' repository is enabled in /etc/pacman.conf and your mirrorlist is up-to-date, then try again."
+    log_error "The 'salt' package was not found in your enabled repositories after update. This is critical. Please ensure your /etc/pacman.conf and /etc/pacman.d/mirrorlist are correct and working, then try again."
 fi
 
 log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
@@ -128,8 +137,7 @@ sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar fi
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------
-${RESET}"
+echo -e "${GREEN}--------------------------------------------------------------------${RESET}"
 log_step "NEXT STEPS: What to do now?"
 
 log_info "1. Set a password for your new user: ${NEW_USERNAME}"
@@ -141,5 +149,4 @@ echo -e "${YELLOW}   You can switch user in your current terminal or log out and
 log_info "3. Open a new terminal (or restart your shell)"
 echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
 
-echo -e "\n${GREEN}--------------------------------------------------------------------
-${RESET}"
+echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
