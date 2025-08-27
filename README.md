@@ -12,6 +12,7 @@ This repository sets up a highly personalized and functional Arch Linux environm
 
 *   **Automated User Creation:** Securely creates a dedicated user (`chalkan3`) during setup.
 *   **Essential System Dependencies:** Installs core packages like `git`, `zsh`, `kitty`, `zellij`, `neovim`, `ruby`, `nodejs`, `python`, `fzf`, `glab`, and more.
+*   **Security Hardening:** Configures `UFW` firewall and hardens `SSH` for a more secure system.
 *   **Zsh Configuration:** Sets up `zsh` with `Powerlevel10k` theme, `zsh-syntax-highlighting`, `zsh-autosuggestions`, and other productivity plugins via `Zinit`.
 *   **Terminal Emulator:** Configures `Kitty` with custom themes and settings.
 *   **Text Editor:** Installs and configures `LunarVim` (a Neovim distribution) for a powerful editing experience.

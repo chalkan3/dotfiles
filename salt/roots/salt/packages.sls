@@ -20,3 +20,6 @@ core_packages:
       - glab
       - pytest
       - python-testinfra
+      - openssh
+      - ufw
+      - audit
