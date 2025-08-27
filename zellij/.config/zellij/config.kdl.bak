@@ -1,0 +1,60 @@
+theme "catppuccin-mocha"
+pane_frames false
+session_serialization false
+
+default_layout "status"
+
+plugins {
+  plugin location="zellij:status-bar" {
+    format_left {
+      part "{mode}"
+      part "  getSessionName" {
+        click_mode "Session"
+      }
+      part "{tabs}"
+    }
+    format_right {
+      command "git" "rev-parse" "--abbrev-ref" "HEAD" {
+        format_hidden " {stdout}"
+        format_on_success "  {stdout} "
+      }
+      part " {datetime} " {
+        datetime_format "%a %d/%m %H:%M"
+        datetime_timezone "America/Sao_Paulo"
+      }
+    }
+    format_center {
+      plugin location="zellij:strider" {
+        format_string "{path}"
+      }
+    }
+  }
+}
+
+
+keybinds {
+  normal {
+    bind "ctrl g" { SwitchToMode "locked"; }
+  }
+
+  shared_except "locked" {
+      bind "alt h" { MoveFocus "Left"; }
+      bind "alt j" { MoveFocus "Down"; }
+      bind "alt k" { MoveFocus "Up"; }
+      bind "alt l" { MoveFocus "Right"; }
+      bind "alt Left" { MoveFocus "Left"; }
+      bind "alt Down" { MoveFocus "Down"; }
+      bind "alt Up" { MoveFocus "Up"; }
+      bind "alt Right" { MoveFocus "Right"; }
+
+      bind "alt n" { NewPane; }
+      bind "alt v" { NewPane "Right"; }
+      bind "alt s" { NewPane "Down"; }
+      bind "alt x" { CloseFocus; }
+      bind "alt o" { ToggleFloatingPanes; }
+
+      bind "alt p" { SwitchToMode "Pane"; }
+      bind "alt r" { SwitchToMode "Resize"; }
+      bind "alt b" { SwitchToMode "Tab"; }
+  }
+}

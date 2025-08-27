@@ -11,7 +11,7 @@ dotfiles_repo:
       - pkg: core_packages
 
 # List of stow packages (must match directory names in the dotfiles repo)
-{% set stow_packages = ['zsh', 'kitty', 'git', 'tmux', 'nvim', 'bash'] %}
+{% set stow_packages = ['zsh', 'kitty', 'git', 'lvim', 'zellij'] %}
 
 # Run stow for each package
 stow_dotfiles:

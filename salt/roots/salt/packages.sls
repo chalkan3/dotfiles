@@ -7,8 +7,10 @@ core_packages:
       - kitty
       - stow
       - git
-      - neovim
-      - tmux
-      # Adicione outros pacotes que você precisa aqui
+      - ruby
+      - zellij
       - curl
       - wget
+      - nodejs
+      - npm
+      - python-pip
