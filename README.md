@@ -34,7 +34,7 @@ curl -L https://raw.githubusercontent.com/chalkan3/dotfiles/master/install.sh | 
 1.  Downloads the `install.sh` script.
 2.  Executes the script, which will:
     *   Check for `sudo` access.
-    *   Install `git`, `salt`, and `python` via `pacman`.
+    *   Install `git`, `salt`, and `python` via `pacman` (after updating package repositories).
     *   Create the user `chalkan3` (if it doesn't exist).
     *   Clone this dotfiles repository into `/home/chalkan3/dotfiles`.
     *   Apply all **SaltStack** states to install remaining dependencies, configure the system, and run `stow`.

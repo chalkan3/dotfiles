@@ -52,6 +52,8 @@ fi
 log_success "Sudo access confirmed!"
 
 log_step "Installing Essential Dependencies (Git, Salt, Python)"
+log_info "Updating package repositories... 🦥"
+sudo pacman -Syu --noconfirm || log_error "Failed to update package repositories. Check your internet connection."
 log_info "Preparing the system for bootstrap... This might take a moment. 🦥"
 sudo pacman -S --noconfirm --needed git salt python || log_error "Failed to install essential dependencies. Check your connection or repositories."
 log_success "Essential dependencies installed!"
