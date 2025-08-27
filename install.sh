@@ -23,8 +23,7 @@ log_info() { echo -e "${CYAN}${BOLD}${SLOTH_EMOJI} INFO: ${RESET}${CYAN}$1${RESE
 log_success() { echo -e "${GREEN}${BOLD}${CHECK_EMOJI} SUCCESS: ${RESET}${GREEN}$1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${BOLD}${WARN_EMOJI} WARNING: ${RESET}${YELLOW}$1${RESET}"; }
 log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESET}"; exit 1; }
-log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---
-${RESET}"; }
+log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
 echo -e "${MAGENTA}${BOLD}"
@@ -100,11 +99,16 @@ sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar fi
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------
-${RESET}"
-echo -e "${GREEN}User ${NEW_USERNAME} has been created. ${RESET}"
-echo -e "${YELLOW}⚠️  Please set a password for ${NEW_USERNAME} by running:${RESET}"
-echo -e "  sudo passwd ${NEW_USERNAME}${RESET}"
-echo -e "${GREEN}After setting the password, you can log in as ${NEW_USERNAME} and restart your shell.${RESET}"
-echo -e "${GREEN}--------------------------------------------------------------------
-${RESET}"
+echo -e "${GREEN}--------------------------------------------------------------------${RESET}"
+log_step "NEXT STEPS: What to do now?"
+
+log_info "1. Set a password for your new user: ${NEW_USERNAME}"
+echo -e "   sudo passwd ${NEW_USERNAME}${RESET}"
+
+log_info "2. Log in as ${NEW_USERNAME}"
+echo -e "   You can switch user in your current terminal or log out and log back in.${RESET}"
+
+log_info "3. Open a new terminal (or restart your shell)"
+echo -e "   This will load your new Zsh configuration and start installing plugins via Zinit. This might take a few moments. 🦥${RESET}"
+
+echo -e "\n${GREEN}--------------------------------------------------------------------${RESET}"
