@@ -119,12 +119,12 @@ elif [ "$OS_FAMILY" = "macos" ]; then
 fi
 
 log_step "Cloning Dotfiles Repository"
-if [ ! -d "$DOTFILES_DIR" ]; then
-    log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
-    git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
-else
-    log_info "Dotfiles repository already exists at ${DOTFILES_DIR}. Skipping clone."
+if [ -d "$DOTFILES_DIR" ]; then
+    log_info "Dotfiles repository already exists at ${DOTFILES_DIR}. Removing and re-cloning..."
+    sudo rm -rf "$DOTFILES_DIR" || log_error "Failed to remove existing dotfiles directory."
 fi
+log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
+git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
 
 log_step "Preparing Pillar for Salt"
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
