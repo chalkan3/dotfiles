@@ -16,7 +16,6 @@ fi
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
     source "${ZINIT_HOME}/zinit.zsh"
-fi
 
 # ------------------------------------------------------------------------------
 # 2. LOAD ZINIT'S ESSENTIAL ANNEXES
@@ -63,7 +62,7 @@ zinit ice on-load"zicompinit; zicdreplay" as"program" lucid for \
     ohmyzsh/ohmyzsh:plugins/git/git.plugin.zsh
 
 zinit ice wait"0" lucid \
-  atclone'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash' \ 
+  atclone'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash' \
   atload'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"'
 zinit snippet OMZ::lib/functions.zsh 
 
@@ -75,37 +74,3 @@ zinit snippet $NVM_DIR/nvm.sh
 zinit ice as"completion" lucid atclone"glab completion -s zsh > _glab" \
     atpull'%atclone' src"_glab"
 zinit light glab/cli
-
-# ------------------------------------------------------------------------------
-# 4. LOAD PERSONAL CONFIGURATION FILES
-# ------------------------------------------------------------------------------
-ZSH_CONFIG_DIR="$HOME/.config/zsh"
-if [[ -d "$ZSH_CONFIG_DIR" ]]; then
-  zinit snippet "$ZSH_CONFIG_DIR/exports.zsh"
-  zinit snippet "$ZSH_CONFIG_DIR/options.zsh"
-  zinit snippet "$ZSH_CONFIG_DIR/aliases.zsh"
-  zinit snippet "$ZSH_CONFIG_DIR/functions.zsh"
-  zinit snippet "$ZSH_CONFIG_DIR/keybindings.zsh"
-
-  source "$ZSH_CONFIG_DIR/exports.zsh"
-  source "$ZSH_CONFIG_DIR/options.zsh"
-  source "$ZSH_CONFIG_DIR/aliases.zsh"
-  source "$ZSH_CONFIG_DIR/functions.zsh"
-  source "$ZSH_CONFIG_DIR/keybindings.zsh"
-
-
-  # Load WSL-specific settings only if running in WSL
-  if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null; then
-    zinit snippet "$ZSH_CONFIG_DIR/wsl.zsh"
-  fi
-fi
-
-# ------------------------------------------------------------------------------
-# 5. FINAL SETUP (POST-LOAD)
-# ------------------------------------------------------------------------------
-# Required for the Powerlevel10k theme to initialize
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

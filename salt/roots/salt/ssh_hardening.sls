@@ -1,87 +1,76 @@
 # State to harden SSH configuration
 
-sshd_config_path: /etc/ssh/sshd_config
-
-ssh_hardening:
+harden_ssh_permit_root_login:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?PermitRootLogin.*
     - repl: PermitRootLogin no
-    - require:
-      - pkg: openssh # Ensure openssh is installed
 
+harden_ssh_password_authentication:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?PasswordAuthentication.*
     - repl: PasswordAuthentication no
-    - require:
-      - pkg: openssh
 
+harden_ssh_challenge_response_authentication:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?ChallengeResponseAuthentication.*
     - repl: ChallengeResponseAuthentication no
-    - require:
-      - pkg: openssh
 
+harden_ssh_use_pam:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?UsePAM.*
     - repl: UsePAM yes
-    - require:
-      - pkg: openssh
 
+harden_ssh_x11_forwarding:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?X11Forwarding.*
     - repl: X11Forwarding no
-    - require:
-      - pkg: openssh
 
+harden_ssh_allow_tcp_forwarding:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?AllowTcpForwarding.*
     - repl: AllowTcpForwarding no
-    - require:
-      - pkg: openssh
 
+harden_ssh_max_auth_tries:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?MaxAuthTries.*
     - repl: MaxAuthTries 3
-    - require:
-      - pkg: openssh
 
+harden_ssh_client_alive_interval:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?ClientAliveInterval.*
     - repl: ClientAliveInterval 300
-    - require:
-      - pkg: openssh
 
+harden_ssh_client_alive_count_max:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?ClientAliveCountMax.*
     - repl: ClientAliveCountMax 0
-    - require:
-      - pkg: openssh
 
+harden_ssh_permit_empty_passwords:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?PermitEmptyPasswords.*
     - repl: PermitEmptyPasswords no
-    - require:
-      - pkg: openssh
 
+harden_ssh_login_grace_time:
   file.replace:
-    - name: {{ sshd_config_path }}
+    - name: /etc/ssh/sshd_config
     - pattern: ^#?LoginGraceTime.*
     - repl: LoginGraceTime 60
-    - require:
-      - pkg: openssh
 
+sshd_service_running:
   service.running:
     - name: sshd
     - restart: True
+    - require:
+      - pkg: core_packages
     - watch:
-      - file: {{ sshd_config_path }}
+      - file: /etc/ssh/sshd_config

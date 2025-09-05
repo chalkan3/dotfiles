@@ -45,3 +45,5 @@ fi
 # Preview options for file and directory browsing
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {} || lsd --tree --depth=3 --color=always {} || echo {}'"
 export FZF_ALT_C_OPTS="--preview 'lsd --tree --depth=3 --color=always {} | head -200'"
+
+export NVIM_APPNAME="lvim"

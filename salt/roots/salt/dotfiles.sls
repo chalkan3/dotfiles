@@ -4,10 +4,10 @@
 dotfiles_repo:
   git.latest:
     - name: https://github.com/chalkan3/dotfiles.git
-    - target: /home/chalkan3/dotfiles
-    - user: chalkan3
+    - target: {{ salt['pillar.get']('home') }}/dotfiles
+    - user: {{ salt['pillar.get']('user') }}
     - require:
-      - user: chalkan3_user
+      
       - pkg: core_packages
 
 # List of stow packages (must match directory names in the dotfiles repo)
@@ -18,10 +18,25 @@ stow_dotfiles:
   cmd.run:
     - names:
       {% for package in stow_packages %}
-      - stow {{ package }}
+      - stow -d dotfiles {{ package }}
       {% endfor %}
-    - cwd: /home/chalkan3/dotfiles
-    - runas: chalkan3
+    - cwd: {{ salt['pillar.get']('home') }}
+    - runas: {{ salt['pillar.get']('user') }}
     - require:
       - git: dotfiles_repo
       - pkg: core_packages
+
+debug_stow_output:
+  cmd.run:
+    - name: |
+        echo "--- Stow dry run for zsh ---"
+        stow -nv zsh
+        echo "--- Contents of ~/dotfiles/zsh ---"
+        ls -la {{ salt['pillar.get']('home') }}/dotfiles/zsh
+        echo "--- Contents of ~ ---"
+        ls -la {{ salt['pillar.get']('home') }}
+        echo "--- Symlink check for ~/.zshrc ---"
+        ls -la {{ salt['pillar.get']('home') }}/.zshrc
+    - runas: {{ salt['pillar.get']('user') }}
+    - require:
+      - cmd: stow_dotfiles
