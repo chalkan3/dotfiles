@@ -1,9 +1,11 @@
 base:
   '*':
     - packages
-    - zinit
-    - ssh_hardening
+    - user
+    - nvm
     - lvim
+    - zinit
     - dotfiles
-    - nvm # Add nvm state
+    - ssh_hardening
+    - firewall
     # - test # Comment out test state
