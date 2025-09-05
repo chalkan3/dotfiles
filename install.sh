@@ -47,7 +47,7 @@ else
     REAL_USER=$(whoami)
 fi
 REAL_HOME=$(eval echo "~$REAL_USER")
-DOTFILES_DIR="/home/chalkan3/.projects/dotfiles" # Assuming this is the clone location
+DOTFILES_DIR="$REAL_HOME/dotfiles" # Assuming this is the clone location
 
 # --- OS Detection ---
 OS_FAMILY=""
@@ -119,7 +119,12 @@ elif [ "$OS_FAMILY" = "macos" ]; then
 fi
 
 log_step "Cloning Dotfiles Repository"
-log_info "Using existing dotfiles repository in ${DOTFILES_DIR}"
+if [ ! -d "$DOTFILES_DIR" ]; then
+    log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
+    git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
+else
+    log_info "Dotfiles repository already exists at ${DOTFILES_DIR}. Skipping clone."
+fi
 
 log_step "Preparing Pillar for Salt"
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
@@ -140,7 +145,7 @@ log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
+sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply --log-level debug || log_error "Failed to apply Salt states. Check logs above."
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
