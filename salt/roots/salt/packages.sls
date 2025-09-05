@@ -6,6 +6,7 @@ core_packages:
       - zsh
       - kitty
       - stow
+      - build-essential
       - git
       - ruby
       - curl
@@ -61,24 +62,32 @@ extract_neovim_tarball:
       - cmd: download_neovim_tarball
     - unless: test -d /tmp/nvim-linux-x86_64
 
-install_neovim_binary:
+install_neovim_runtime:
   cmd.run:
-    - name: mv /tmp/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+    - name: mv /tmp/nvim-linux-x86_64 /opt/nvim
     - require:
       - cmd: extract_neovim_tarball
-    - unless: test -f /usr/local/bin/nvim
+    - unless: test -d /opt/nvim
+
+neovim_symlink:
+  file.symlink:
+    - name: /usr/local/bin/nvim
+    - target: /opt/nvim/bin/nvim
+    - force: True
+    - require:
+      - cmd: install_neovim_runtime
 
 clean_neovim_tarball:
   file.absent:
-    - name: /tmp/nvim-linux64.tar.gz
+    - name: /tmp/nvim-linux-x86_64.tar.gz
     - require:
-      - cmd: install_neovim_binary
+      - cmd: neovim_symlink
 
 clean_neovim_extracted_dir:
   file.absent:
     - name: /tmp/nvim-linux-x86_64
     - require:
-      - cmd: install_neovim_binary
+      - cmd: neovim_symlink
 
 download_zellij_tarball:
   cmd.run:
@@ -112,3 +121,11 @@ clean_zellij_extracted_dir:
     - name: /tmp/zellij
     - require:
       - cmd: install_zellij_binary
+
+install_rustup:
+  cmd.run:
+    - name: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    - runas: {{ salt['pillar.get']('user') }}
+    - creates: {{ salt['pillar.get']('home') }}/.cargo/bin/cargo
+    - require:
+      - pkg: core_packages

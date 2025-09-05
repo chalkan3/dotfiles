@@ -17,7 +17,6 @@ install_node_lts:
         export NVM_DIR="{{ salt['pillar.get']('home') }}/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         nvm install --lts
-        nvm use --lts
     - runas: {{ salt['pillar.get']('user') }}
     - require:
       - cmd: install_nvm
