@@ -80,7 +80,7 @@ install_deps_ubuntu() {
         sudo apt-get install -y "${missing_deps[@]}" || log_error "Failed to install dependencies."
     else
         log_success "All essential dependencies are already installed."
-    nfi
+    fi
 }
 
 install_deps_arch() {
