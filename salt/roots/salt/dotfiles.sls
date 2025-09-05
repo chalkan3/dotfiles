@@ -26,17 +26,4 @@ stow_dotfiles:
       - git: dotfiles_repo
       - pkg: core_packages
 
-debug_stow_output:
-  cmd.run:
-    - name: |
-        echo "--- Stow dry run for zsh ---"
-        stow -d {{ salt['pillar.get']('home') }}/dotfiles -nv zsh
-        echo "--- Contents of ~/dotfiles/zsh ---"
-        ls -la {{ salt['pillar.get']('home') }}/dotfiles/zsh
-        echo "--- Contents of ~ ---"
-        ls -la {{ salt['pillar.get']('home') }}
-        echo "--- Symlink check for ~/.zshrc ---"
-        ls -la {{ salt['pillar.get']('home') }}/.zshrc
-    - runas: {{ salt['pillar.get']('user') }}
-    - require:
-      - cmd: stow_dotfiles
+
