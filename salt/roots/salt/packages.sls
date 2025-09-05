@@ -60,7 +60,6 @@ extract_neovim_tarball:
     - cwd: /tmp
     - require:
       - cmd: download_neovim_tarball
-    - unless: test -d /tmp/nvim-linux-x86_64
 
 install_neovim_runtime:
   cmd.run:
@@ -80,14 +79,14 @@ neovim_symlink:
 clean_neovim_tarball:
   file.absent:
     - name: /tmp/nvim-linux-x86_64.tar.gz
-    - require:
-      - cmd: neovim_symlink
+    - onchanges:
+      - cmd: install_neovim_runtime
 
 clean_neovim_extracted_dir:
   file.absent:
     - name: /tmp/nvim-linux-x86_64
-    - require:
-      - cmd: neovim_symlink
+    - onchanges:
+      - cmd: install_neovim_runtime
 
 download_zellij_tarball:
   cmd.run:
