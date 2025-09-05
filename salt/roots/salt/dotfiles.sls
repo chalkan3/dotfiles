@@ -18,7 +18,7 @@ stow_dotfiles:
   cmd.run:
     - names:
       {% for package in stow_packages %}
-      - stow -d dotfiles {{ package }}
+      - stow -d {{ salt['pillar.get']('home') }}/dotfiles {{ package }}
       {% endfor %}
     - cwd: {{ salt['pillar.get']('home') }}
     - runas: {{ salt['pillar.get']('user') }}
