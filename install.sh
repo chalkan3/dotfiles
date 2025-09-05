@@ -124,7 +124,7 @@ if [ -d "$DOTFILES_DIR" ]; then
     sudo rm -rf "$DOTFILES_DIR" || log_error "Failed to remove existing dotfiles directory."
 fi
 log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
-git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
+git clone --depth 1 https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
 
 log_step "Preparing Pillar for Salt"
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
