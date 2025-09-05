@@ -55,8 +55,10 @@ if [[ "$(uname)" == "Darwin" ]]; then
     OS_FAMILY="macos"
 elif [[ -f /etc/lsb-release || -f /etc/debian_version ]]; then
     OS_FAMILY="ubuntu"
+elif [[ -f /etc/arch-release ]]; then
+    OS_FAMILY="arch"
 else
-    log_error "Unsupported operating system. This script supports macOS and Ubuntu."
+    log_error "Unsupported operating system. This script supports macOS, Ubuntu, and Arch Linux."
 fi
 log_info "Detected OS Family: $OS_FAMILY"
 
@@ -76,6 +78,26 @@ install_deps_ubuntu() {
     if [ ${#missing_deps[@]} -gt 0 ]; then
         log_info "Installing missing dependencies: ${missing_deps[*]}..."
         sudo apt-get install -y "${missing_deps[@]}" || log_error "Failed to install dependencies."
+    else
+        log_success "All essential dependencies are already installed."
+    nfi
+}
+
+install_deps_arch() {
+    log_info "Checking Arch Linux dependencies..."
+    sudo pacman -Sy --noconfirm || log_warn "Could not update pacman package lists."
+
+    local missing_deps=()
+    local deps_to_check=(git salt python python-pip)
+    for dep in "${deps_to_check[@]}"; do
+        if ! pacman -Q "$dep" &>/dev/null; then
+            missing_deps+=("$dep")
+        fi
+    done
+
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        log_info "Installing missing dependencies: ${missing_deps[*]}..."
+        sudo pacman -S --noconfirm "${missing_deps[@]}" || log_error "Failed to install dependencies."
     else
         log_success "All essential dependencies are already installed."
     fi
@@ -116,6 +138,8 @@ if [ "$OS_FAMILY" = "ubuntu" ]; then
     install_deps_ubuntu
 elif [ "$OS_FAMILY" = "macos" ]; then
     install_deps_macos
+elif [ "$OS_FAMILY" = "arch" ]; then
+    install_deps_arch
 fi
 
 log_step "Cloning Dotfiles Repository"
