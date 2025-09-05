@@ -208,4 +208,4 @@ log_info "1. Open a new terminal (or restart your shell)"
 echo -e "${GREEN}   This will load your new Zsh configuration and start installing plugins. This might take a few moments. 🦥${RESET}"
 
 echo -e "\n${GREEN}--------------------------------------------------------------------
-${RESET}
+${RESET}"
