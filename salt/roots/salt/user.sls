@@ -7,6 +7,6 @@ chalkan3_user:
     - home: /home/chalkan3
     - groups:
       - wheel
-    - passwd: {{ pillar.user_password }}
+    
     - require:
       - pkg: core_packages # Ensure zsh is installed before setting as shell

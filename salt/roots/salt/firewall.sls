@@ -14,21 +14,24 @@ ufw_enabled:
 ufw_default_deny_incoming:
   cmd.run:
     - name: ufw default deny incoming
-    - unless: ufw status | grep "Default: deny (incoming)"
+    - unless:
+      - cmd.run: ufw status | grep -q "Default: deny (incoming)"
     - require:
       - service: ufw_enabled
 
 ufw_default_allow_outgoing:
   cmd.run:
     - name: ufw default allow outgoing
-    - unless: ufw status | grep "Default: allow (outgoing)"
+    - unless:
+      - cmd.run: ufw status | grep -q "Default: allow (outgoing)"
     - require:
       - service: ufw_enabled
 
 ufw_allow_ssh:
   cmd.run:
     - name: ufw allow ssh
-    - unless: ufw status | grep "22/tcp (SSH)"
+    - unless:
+      - cmd.run: ufw status | grep -q "22/tcp (SSH)"
     - require:
       - service: ufw_enabled
 
