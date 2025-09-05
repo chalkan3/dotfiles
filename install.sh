@@ -125,6 +125,7 @@ if [ -d "$DOTFILES_DIR" ]; then
 fi
 log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
 git clone --depth 1 https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
+cd "$DOTFILES_DIR" && git pull || log_error "Failed to pull latest changes after cloning."
 
 log_step "Preparing Pillar for Salt"
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
