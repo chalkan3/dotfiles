@@ -30,7 +30,7 @@ debug_stow_output:
   cmd.run:
     - name: |
         echo "--- Stow dry run for zsh ---"
-        stow -nv zsh
+        stow -d {{ salt['pillar.get']('home') }}/dotfiles -nv zsh
         echo "--- Contents of ~/dotfiles/zsh ---"
         ls -la {{ salt['pillar.get']('home') }}/dotfiles/zsh
         echo "--- Contents of ~ ---"
