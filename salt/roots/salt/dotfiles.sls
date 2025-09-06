@@ -12,29 +12,17 @@ dotfiles_repo:
 
 # Apply stow for dotfiles
 # Apply stow for dotfiles
-apply_stow_zsh:
+# Apply stow for dotfiles
+apply_stow:
   cmd.run:
-    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow zsh
+    - name: |
+        stow --dir={{ salt['pillar.get']('home') }}/dotfiles zsh
+        stow --dir={{ salt['pillar.get']('home') }}/dotfiles kitty
+        stow --dir={{ salt['pillar.get']('home') }}/dotfiles lvim
+        stow --dir={{ salt['pillar.get']('home') }}/dotfiles git
+        stow --dir={{ salt['pillar.get']('home') }}/dotfiles zellij
     - runas: {{ salt['pillar.get']('user') }}
-
-apply_stow_kitty:
-  cmd.run:
-    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow kitty
-    - runas: {{ salt['pillar.get']('user') }}
-
-apply_stow_lvim:
-  cmd.run:
-    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow lvim
-    - runas: {{ salt['pillar.get']('user') }}
-
-apply_stow_git:
-  cmd.run:
-    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow git
-    - runas: {{ salt['pillar.get']('user') }}
-
-apply_stow_zellij:
-  cmd.run:
-    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow zellij
-    - runas: {{ salt['pillar.get']('user') }}
+    - require:
+      - git: dotfiles_repo
 
 
