@@ -26,19 +26,11 @@ log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESE
 log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
-echo -e "${MAGENTA}${BOLD}"
-cat << "EOF"
+echo -e "
+  ${GREEN}${BOLD}树懒${RESET}
 
-  _   _      _ _           _ _ _
- | | | | ___| | | ___  ___| | | |
- | |_| |/ _ \ | |/ _ \/ __| | | |
- |  _  |  __/ | |  __/ __| | | |
- |_| |_|\___|_|_|\___||___/_|_|_|
-
-  ${SLOTH_EMOJI}  Your development environment, configured with care! ${SLOTH_EMOJI}
-
-EOF
-echo -e "${RESET}"
+  ${CYAN}${SLOTH_EMOJI}  Your development environment, configured with care! ${SLOTH_EMOJI}${RESET}
+"
 
 # --- User and OS Configuration ---
 if [ -n "$SUDO_USER" ]; then
@@ -74,11 +66,34 @@ install_deps_ubuntu() {
         then
             missing_deps+=("$dep")
         fi
-    done
+d    done
 
     if [ ${#missing_deps[@]} -gt 0 ]; then
         log_info "Installing missing dependencies: ${missing_deps[*]}..."
-        sudo apt-get install -y "${missing_deps[@]}" || log_error "Failed to install dependencies."
+
+        # Special handling for salt-minion if it's missing
+        local salt_minion_installed=false
+        if [[ " ${missing_deps[*]} " =~ " salt-minion " ]]; then
+            log_info "Attempting to install salt-minion via bootstrap script..."
+            if curl -L https://bootstrap.saltproject.io -o /tmp/install_salt.sh && \
+               sudo sh /tmp/install_salt.sh -P -N stable; then
+                log_success "salt-minion installed successfully via bootstrap script."
+                # Remove salt-minion from missing_deps so apt doesn't try again
+                missing_deps=( "${missing_deps[@]/salt-minion}" )
+                salt_minion_installed=true
+            else
+                log_warn "Failed to install salt-minion via bootstrap script. Will try apt-get."
+            fi
+            rm -f /tmp/install_salt.sh # Clean up the bootstrap script
+        fi
+
+        # Install remaining missing dependencies via apt-get
+        if [ ${#missing_deps[@]} -gt 0 ]; then
+            sudo apt-get install -y "${missing_deps[@]}" || log_error "Failed to install remaining dependencies."
+        elif ! $salt_minion_installed && [[ " ${deps_to_check[*]} " =~ " salt-minion " ]]; then
+            # If salt-minion was the only missing dep and bootstrap failed, then it's an error
+            log_error "Failed to install dependencies."
+        fi
     else
         log_success "All essential dependencies are already installed."
     fi
