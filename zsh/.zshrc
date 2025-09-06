@@ -1,25 +1,41 @@
+# --- PATH Management ---
+# Helper function to add a directory to the PATH if it exists and isn't already there.
+path_add() {
+  if [ -d "$1" ] && [[ ":$PATH:" != ":$1:" ]]; then
+    PATH="$1:$PATH"
+  fi
+}
+
+# Add user bin directories to the front of the PATH
+path_add "/usr/bin"
+path_add "$HOME/.local/bin"
+path_add "$HOME/bin"
+
+# --- Go ---
+export GOPATH="$HOME/go"
+path_add "/usr/local/bin/go/bin"
+path_add "$GOPATH/bin"
+
+# --- Pulumi ---
+path_add "$HOME/.pulumi/bin"
+
+# --- Salt ---
+export SALT_SALTFILE="/home/${USER}/salt/Saltfile"
+path_add "/home/${USER}/salt"
+
+# Finalize the PATH
+export PATH
+
+echo "DEBUG: Sourcing ~/.zshrc"
+ZSH_CONFIG_DIR="$HOME/.config/zsh"
+source "${ZSH_CONFIG_DIR}/exports.zsh"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
-# ~/.zshrc
-# The Power User's Edition: Focused on interactivity and workflow automation.
-
-# ------------------------------------------------------------------------------
-# 1. LOAD ZINIT (PLUGIN MANAGER)
-# ------------------------------------------------------------------------------
-# The following line will be added by the Zinit installer.
-# For now, we source it assuming it's at the default location.
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
-    source "${ZINIT_HOME}/zinit.zsh"
-fi
-
-# Source exports.zsh early for PATH management
-source "${ZSH_CONFIG_DIR}/exports.zsh"
 
 # ------------------------------------------------------------------------------
 # 2. LOAD ZINIT'S ESSENTIAL ANNEXES

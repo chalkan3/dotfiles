@@ -26,7 +26,7 @@ log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESE
 log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
-echo -e "# --- Welcome Banner ---
+# --- Welcome Banner ---
 if command -v figlet &>/dev/null; then
   echo -e "${GREEN}${BOLD}"
   figlet "树懒"

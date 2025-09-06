@@ -1,0 +1,10 @@
+# Salt-minion configuration for masterless mode
+file_client: local
+
+file_roots:
+  base:
+    - /home/chalkan3/dotfiles/salt/roots/salt
+
+pillar_roots:
+  base:
+    - /home/chalkan3/dotfiles/salt/roots/pillar
