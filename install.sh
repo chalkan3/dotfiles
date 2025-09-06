@@ -159,10 +159,40 @@ log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-stdin state.apply <<EOF || log_error "Failed to apply Salt states. Check logs above."
+
+# Manually create minion.conf with absolute paths
+MINION_CONF="$DOTFILES_DIR/salt/minion.conf"
+sudo bash -c "cat > $MINION_CONF <<EOL
+# Salt-minion configuration for masterless mode
+file_client: local
+
+file_roots:
+  base:
+    - $DOTFILES_DIR/salt/roots/salt
+
+pillar_roots:
+  base:
+    - $DOTFILES_DIR/salt/roots/pillar
+EOL"
+# The above `cat > $MINION_CONF <<EOL` is a heredoc, and the content within it is treated as a literal string. 
+# Therefore, any special characters like `$` or backticks within the heredoc are not interpreted by the shell.
+# The `sudo bash -c` is used to ensure that the redirection happens with root privileges, which is necessary if the DOTFILES_DIR is not owned by the current user.
+# The `EOL` marker signifies the end of the heredoc. 
+# The content of the heredoc is then written to the file specified by `$MINION_CONF`.
+# The `|| log_error "Failed to write minion.conf."` part is a standard shell construct to execute the `log_error` command if the preceding command fails.
+
+# Create temporary pillar file
+TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
+sudo mkdir -p "$TEMP_PILLAR_DIR" || log_error "Failed to create temporary Pillar directory."
+sudo chmod 700 "$TEMP_PILLAR_DIR" || log_error "Failed to adjust permissions for temporary directory."
+sudo bash -c "cat > $TEMP_PILLAR_DIR/user_details.sls <<EOF
 user: '$REAL_USER'
 home: '$REAL_HOME'
-EOF
+EOF" || log_error "Failed to write temporary Pillar file."
+sudo chmod 600 "$TEMP_PILLAR_DIR/user_details.sls" || log_error "Failed to adjust permissions for temporary Pillar file."
+
+# Run salt-call using the manually created minion.conf and temporary pillar
+sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
