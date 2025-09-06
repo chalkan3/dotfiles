@@ -16,6 +16,7 @@ fi
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
     source "${ZINIT_HOME}/zinit.zsh"
+fi
 
 # ------------------------------------------------------------------------------
 # 2. LOAD ZINIT'S ESSENTIAL ANNEXES
@@ -64,8 +65,7 @@ zinit ice on-load"zicompinit; zicdreplay" as"program" lucid for \
 # NVM (Node Version Manager)
 # NVM is installed by Salt. We just need to source it.
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
-zinit ice as"completion" lucid atclone"glab completion -s zsh > _glab" \
-    atpull'%atclone' src"_glab"
+zinit ice as"completion" lucid atclone="glab completion -s zsh > _glab" atpull="%atclone" src="_glab"
 zinit light glab/cli

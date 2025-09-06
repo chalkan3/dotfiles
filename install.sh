@@ -47,7 +47,7 @@ else
     REAL_USER=$(whoami)
 fi
 REAL_HOME=$(eval echo "~$REAL_USER")
-DOTFILES_DIR="$REAL_HOME/dotfiles" # Assuming this is the clone location
+DOTFILES_DIR="$REAL_HOME/.projects/dotfiles"
 
 # --- OS Detection ---
 OS_FAMILY=""
@@ -145,15 +145,7 @@ elif [ "$OS_FAMILY" = "arch" ]; then
     install_deps_arch
 fi
 
-log_step "Cloning Dotfiles Repository"
-if [ -d "$DOTFILES_DIR" ]; then
-    log_info "Dotfiles repository already exists at ${DOTFILES_DIR}. Removing and re-cloning..."
-    sudo rm -rf "$DOTFILES_DIR" || log_error "Failed to remove existing dotfiles directory."
-fi
-log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
-git clone --depth 1 https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
-sudo chown -R "$REAL_USER:$REAL_USER" "$DOTFILES_DIR"
-cd "$DOTFILES_DIR" && git pull || log_error "Failed to pull latest changes after cloning."
+
 
 log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
@@ -161,18 +153,18 @@ sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
 
 # Manually create minion.conf with absolute paths
-MINION_CONF="$DOTFILES_DIR/salt/minion.conf"
+MINION_CONF="$DOTFILES_DIR/salt/minion"
 sudo bash -c "cat > $MINION_CONF <<EOL
 # Salt-minion configuration for masterless mode
 file_client: local
 
 file_roots:
   base:
-    - $DOTFILES_DIR/salt/roots/salt
+    - $REAL_HOME/dotfiles/salt/roots/salt
 
 pillar_roots:
   base:
-    - $DOTFILES_DIR/salt/roots/pillar
+    - $REAL_HOME/dotfiles/salt/roots/pillar
 EOL"
 # The above `cat > $MINION_CONF <<EOL` is a heredoc, and the content within it is treated as a literal string. 
 # Therefore, any special characters like `$` or backticks within the heredoc are not interpreted by the shell.

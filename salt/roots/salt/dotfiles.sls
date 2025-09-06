@@ -10,4 +10,31 @@ dotfiles_repo:
       
       - pkg: core_packages
 
+# Apply stow for dotfiles
+# Apply stow for dotfiles
+apply_stow_zsh:
+  cmd.run:
+    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow zsh
+    - runas: {{ salt['pillar.get']('user') }}
+
+apply_stow_kitty:
+  cmd.run:
+    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow kitty
+    - runas: {{ salt['pillar.get']('user') }}
+
+apply_stow_lvim:
+  cmd.run:
+    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow lvim
+    - runas: {{ salt['pillar.get']('user') }}
+
+apply_stow_git:
+  cmd.run:
+    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow git
+    - runas: {{ salt['pillar.get']('user') }}
+
+apply_stow_zellij:
+  cmd.run:
+    - name: cd {{ salt['pillar.get']('home') }}/dotfiles && stow zellij
+    - runas: {{ salt['pillar.get']('user') }}
+
 
