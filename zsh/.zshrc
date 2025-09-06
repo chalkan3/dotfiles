@@ -61,15 +61,10 @@ zinit ice on-load"zicompinit; zicdreplay" as"program" lucid for \
     ohmyzsh/ohmyzsh:lib/git.zsh \
     ohmyzsh/ohmyzsh:plugins/git/git.plugin.zsh
 
-zinit ice wait"0" lucid \
-  atclone'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash' \
-  atload'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"'
-zinit snippet OMZ::lib/functions.zsh 
-
-zinit ice from"gh-r" as"program" lucid \
-    atload"source $NVM_DIR/nvm.sh --no-use" \
-    if"[[ ! -f $NVM_DIR/nvm.sh ]]"
-zinit snippet $NVM_DIR/nvm.sh
+# NVM (Node Version Manager)
+# NVM is installed by Salt. We just need to source it.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 zinit ice as"completion" lucid atclone"glab completion -s zsh > _glab" \
     atpull'%atclone' src"_glab"
