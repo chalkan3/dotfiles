@@ -26,11 +26,18 @@ log_error() { echo -e "${RED}${BOLD}${ERROR_EMOJI} ERROR: ${RESET}${RED}$1${RESE
 log_step() { echo -e "\n${BLUE}${BOLD}--- STEP: $1 ---\n${RESET}"; }
 
 # --- Welcome Banner ---
-echo -e "
-  ${GREEN}${BOLD}树懒${RESET}
+echo -e "# --- Welcome Banner ---
+if command -v figlet &>/dev/null; then
+  echo -e "${GREEN}${BOLD}"
+  figlet "树懒"
+  echo -e "${RESET}"
+else
+  echo -e "${GREEN}${BOLD}
+  树懒
+${RESET}"
+fi
+echo -e "${CYAN}  ${SLOTH_EMOJI}  Your development environment, configured with care! ${SLOTH_EMOJI}${RESET}"
 
-  ${CYAN}${SLOTH_EMOJI}  Your development environment, configured with care! ${SLOTH_EMOJI}${RESET}
-"
 
 # --- User and OS Configuration ---
 if [ -n "$SUDO_USER" ]; then
@@ -60,13 +67,13 @@ install_deps_ubuntu() {
     sudo apt-get update || log_warn "Could not update apt package lists."
     
     local missing_deps=()
-    local deps_to_check=(git salt-minion python3 python3-pip stow)
+    local deps_to_check=(git salt-minion python3 python3-pip stow figlet)
     for dep in "${deps_to_check[@]}"; do
         if ! dpkg -s "$dep" &>/dev/null;
         then
             missing_deps+=("$dep")
         fi
-d    done
+    done
 
     if [ ${#missing_deps[@]} -gt 0 ]; then
         log_info "Installing missing dependencies: ${missing_deps[*]}..."
