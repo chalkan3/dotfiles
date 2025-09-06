@@ -168,10 +168,22 @@ sudo chmod 600 "$TEMP_PILLAR_FILE" || log_error "Failed to adjust permissions fo
 log_success "Temporary Pillar prepared!"
 
 log_step "Applying Salt States (Main Configuration)"
+
+log_info "Dynamically setting Salt file_roots path..."
+MINION_CONF="$DOTFILES_DIR/salt/minion.conf"
+# Use a different delimiter for sed to avoid issues with paths containing '/'
+sudo sed -i "s#{{ salt\[\'pillar.get\'\].'home'\}}/dotfiles/salt/roots/salt#$DOTFILES_DIR/salt/roots/salt#g" "$MINION_CONF"
+sudo sed -i "s#{{ salt\[\'pillar.get\'\].'home'\}}/dotfiles/salt/roots/pillar#$DOTFILES_DIR/salt/roots/pillar#g" "$MINION_CONF"
+log_success "Salt minion config updated."
+
+log_info "Clearing Salt cache..."
+sudo rm -rf /var/cache/salt
+log_success "Salt cache cleared."
+
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
+sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
