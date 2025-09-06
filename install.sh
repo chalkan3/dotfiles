@@ -69,9 +69,9 @@ install_deps_ubuntu() {
     log_info "Installing SaltStack repository and salt-minion..."
     sudo apt-get install -y apt-transport-https gnupg2 curl || log_error "Failed to install repository dependencies."
 
-    curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.saltproject.io/py3/ubuntu/24.04/amd64/archive-keyring.gpg || log_error "Failed to import SaltStack GPG key."
+    curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.saltstack.com/py3/ubuntu/24.04/amd64/archive-keyring.gpg || log_error "Failed to import SaltStack GPG key."
 
-    echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/py3/ubuntu/24.04/amd64/latest noble main" | sudo tee /etc/apt/sources.list.d/salt.list || log_error "Failed to create SaltStack apt sources list."
+    echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltstack.com/salt/py3/ubuntu/24.04/amd64/latest noble main" | sudo tee /etc/apt/sources.list.d/salt.list || log_error "Failed to create SaltStack apt sources list."
 
     sudo apt-get update || log_warn "Could not update apt package lists after adding SaltStack repository."
 
