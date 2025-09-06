@@ -1,6 +1,7 @@
 base:
   '*':
     - packages
+    - user
     - nvm
     - lvim
     - zinit
