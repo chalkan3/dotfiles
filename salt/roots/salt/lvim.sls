@@ -1,6 +1,9 @@
 # State to install LunarVim via its official script
 
 # Note: The actual dependencies for lvim are handled in packages.sls
+# State to install LunarVim via its official script
+
+# Note: The actual dependencies for lvim are handled in packages.sls
 install_lvim_from_script:
   cmd.run:
     - name: |
@@ -13,4 +16,5 @@ install_lvim_from_script:
     - runas: {{ salt['pillar.get']('user') }}
     - require:
       - cmd: install_node_lts # Ensure NVM has installed Node.js LTS
+
     

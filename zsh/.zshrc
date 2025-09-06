@@ -18,6 +18,9 @@ if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
     source "${ZINIT_HOME}/zinit.zsh"
 fi
 
+# Source exports.zsh early for PATH management
+source "${ZSH_CONFIG_DIR}/exports.zsh"
+
 # ------------------------------------------------------------------------------
 # 2. LOAD ZINIT'S ESSENTIAL ANNEXES
 # ------------------------------------------------------------------------------
