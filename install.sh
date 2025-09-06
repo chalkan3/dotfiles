@@ -187,7 +187,9 @@ else
 fi
 
 log_step "Finalizing and Cleaning Up"
-log_info "Cleanup complete!"
+log_info "Removing temporary Pillar files..."
+sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar files. Manual cleanup might be needed."
+log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
 echo -e "${GREEN}--------------------------------------------------------------------
