@@ -68,9 +68,10 @@ install_deps_ubuntu() {
     sudo apt-get update || log_warn "Could not update apt package lists."
     
     local missing_deps=()
-    local deps_to_check=(git salt-minion python3 python3-pip)
+    local deps_to_check=(git salt-minion python3 python3-pip stow)
     for dep in "${deps_to_check[@]}"; do
-        if ! dpkg -s "$dep" &>/dev/null; then
+        if ! dpkg -s "$dep" &>/dev/null;
+        then
             missing_deps+=("$dep")
         fi
     done
@@ -88,9 +89,10 @@ install_deps_arch() {
     sudo pacman -Sy --noconfirm || log_warn "Could not update pacman package lists."
 
     local missing_deps=()
-    local deps_to_check=(git salt python python-pip)
+    local deps_to_check=(git salt python python-pip stow)
     for dep in "${deps_to_check[@]}"; do
-        if ! pacman -Q "$dep" &>/dev/null; then
+        if ! pacman -Q "$dep" &>/dev/null;
+        then
             missing_deps+=("$dep")
         fi
     done
@@ -104,7 +106,8 @@ install_deps_arch() {
 }
 
 install_deps_macos() {
-    if ! command -v brew &>/dev/null; then
+    if ! command -v brew &>/dev/null;
+    then
         log_warn "Homebrew not found. Attempting to install..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || log_error "Failed to install Homebrew."
     else
@@ -115,7 +118,7 @@ install_deps_macos() {
     brew update || log_warn "Failed to update Homebrew."
 
     local missing_deps=()
-    local deps_to_check=(git salt python)
+    local deps_to_check=(git salt python stow)
     local installed_formulae
     installed_formulae=$(brew list --formula)
 
@@ -149,45 +152,19 @@ if [ -d "$DOTFILES_DIR" ]; then
 fi
 log_info "Cloning dotfiles repository to ${DOTFILES_DIR}..."
 git clone --depth 1 https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
+sudo chown -R "$REAL_USER:$REAL_USER" "$DOTFILES_DIR"
 cd "$DOTFILES_DIR" && git pull || log_error "Failed to pull latest changes after cloning."
-cd "$DOTFILES_DIR" && git pull || log_error "Failed to pull latest changes after cloning."
-
-log_step "Preparing Pillar for Salt"
-TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
-TEMP_PILLAR_FILE="${TEMP_PILLAR_DIR}/user_details.sls"
-
-sudo mkdir -p "$TEMP_PILLAR_DIR" || log_error "Failed to create temporary Pillar directory."
-sudo chmod 700 "$TEMP_PILLAR_DIR" || log_error "Failed to adjust permissions for temporary directory."
-
-sudo bash -c "cat > $TEMP_PILLAR_FILE <<EOF
-user: '$REAL_USER'
-home: '$REAL_HOME'
-EOF" || log_error "Failed to write temporary Pillar file."
-
-sudo chmod 600 "$TEMP_PILLAR_FILE" || log_error "Failed to adjust permissions for temporary Pillar file."
-log_success "Temporary Pillar prepared!"
 
 log_step "Applying Salt States (Main Configuration)"
-
-log_info "Dynamically setting Salt file_roots path..."
-MINION_CONF="$DOTFILES_DIR/salt/minion.conf"
-# Use a different delimiter for sed to avoid issues with paths containing '/'
-sudo sed -i "s#{{ salt\[\'pillar.get\'\].'home'\}}/dotfiles/salt/roots/salt#$DOTFILES_DIR/salt/roots/salt#g" "$MINION_CONF"
-sudo sed -i "s#{{ salt\[\'pillar.get\'\].'home'\}}/dotfiles/salt/roots/pillar#$DOTFILES_DIR/salt/roots/pillar#g" "$MINION_CONF"
-log_success "Salt minion config updated."
-
-log_info "Clearing Salt cache..."
-sudo rm -rf /var/cache/salt
-log_success "Salt cache cleared."
-
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
+sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar="{'user': '$REAL_USER', 'home': '$REAL_HOME'}" state.apply || log_error "Failed to apply Salt states. Check logs above."
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
-if command -v zsh &>/dev/null; then
+if command -v zsh &>/dev/null;
+then
     ZSH_PATH=$(command -v zsh)
     CURRENT_SHELL=$(getent passwd "$REAL_USER" | cut -d: -f7)
     if [ "$CURRENT_SHELL" != "$ZSH_PATH" ]; then
@@ -207,9 +184,7 @@ else
 fi
 
 log_step "Finalizing and Cleaning Up"
-log_info "Removing temporary Pillar files..."
-sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar files. Manual cleanup might be needed."
-log_success "Cleanup complete!"
+log_info "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
 echo -e "${GREEN}--------------------------------------------------------------------
