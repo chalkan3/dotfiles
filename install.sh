@@ -159,7 +159,10 @@ log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar="{'user': '$REAL_USER', 'home': '$REAL_HOME'}" state.apply || log_error "Failed to apply Salt states. Check logs above."
+sudo salt-call --local --file-root="$DOTFILES_DIR/salt/roots/salt" --pillar-stdin state.apply <<EOF || log_error "Failed to apply Salt states. Check logs above."
+user: '$REAL_USER'
+home: '$REAL_HOME'
+EOF
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
