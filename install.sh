@@ -63,6 +63,7 @@ log_info "Detected OS Family: $OS_FAMILY"
 
 # --- Dependency Installation Functions ---
 install_deps_ubuntu() {
+    set -x
     log_info "Checking Ubuntu dependencies..."
     sudo apt-get update || log_warn "Could not update apt package lists."
 
