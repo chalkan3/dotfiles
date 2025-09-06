@@ -65,9 +65,25 @@ log_info "Detected OS Family: $OS_FAMILY"
 install_deps_ubuntu() {
     log_info "Checking Ubuntu dependencies..."
     sudo apt-get update || log_warn "Could not update apt package lists."
+
+    log_info "Installing SaltStack repository and salt-minion..."
+    sudo apt-get install -y apt-transport-https gnupg2 curl || log_error "Failed to install repository dependencies."
+
+    curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.saltproject.io/py3/ubuntu/24.04/amd64/archive-keyring.gpg || log_error "Failed to import SaltStack GPG key."
+
+    echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/py3/ubuntu/24.04/amd64/latest noble main" | sudo tee /etc/apt/sources.list.d/salt.list || log_error "Failed to create SaltStack apt sources list."
+
+    sudo apt-get update || log_warn "Could not update apt package lists after adding SaltStack repository."
+
+    # Check if salt-minion is already installed before attempting to install it
+    if ! dpkg -s salt-minion &>/dev/null; then
+        sudo apt-get install -y salt-minion || log_error "Failed to install salt-minion."
+    else
+        log_info "salt-minion is already installed."
+    fi
     
     local missing_deps=()
-    local deps_to_check=(git salt-minion python3 python3-pip stow figlet)
+    local deps_to_check=(git python3 python3-pip stow figlet)
     for dep in "${deps_to_check[@]}"; do
         if ! dpkg -s "$dep" &>/dev/null;
         then
@@ -78,29 +94,12 @@ install_deps_ubuntu() {
     if [ ${#missing_deps[@]} -gt 0 ]; then
         log_info "Installing missing dependencies: ${missing_deps[*]}..."
 
-        # Special handling for salt-minion if it's missing
-        local salt_minion_installed=false
-        if [[ " ${missing_deps[*]} " =~ " salt-minion " ]]; then
-            log_info "Attempting to install salt-minion via bootstrap script..."
-            if curl -L https://bootstrap.saltproject.io -o /tmp/install_salt.sh && \
-               cat /tmp/install_salt.sh | head -n 10 && \
-               sudo bash /tmp/install_salt.sh -P -N stable; then
-                log_success "salt-minion installed successfully via bootstrap script."
-                # Remove salt-minion from missing_deps so apt doesn't try again
-                missing_deps=( "${missing_deps[@]/salt-minion}" )
-                salt_minion_installed=true
-            else
-                log_warn "Failed to install salt-minion via bootstrap script. Will try apt-get."
-            fi
-            rm -f /tmp/install_salt.sh # Clean up the bootstrap script
-        fi
+        
 
         # Install remaining missing dependencies via apt-get
         if [ ${#missing_deps[@]} -gt 0 ]; then
             sudo apt-get install -y "${missing_deps[@]}" || log_error "Failed to install remaining dependencies."
-        elif ! $salt_minion_installed && [[ " ${deps_to_check[*]} " =~ " salt-minion " ]]; then
-            # If salt-minion was the only missing dep and bootstrap failed, then it's an error
-            log_error "Failed to install dependencies."
+        
         fi
     else
         log_success "All essential dependencies are already installed."
