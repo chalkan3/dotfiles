@@ -83,7 +83,7 @@ install_deps_ubuntu() {
         if [[ " ${missing_deps[*]} " =~ " salt-minion " ]]; then
             log_info "Attempting to install salt-minion via bootstrap script..."
             if curl -L https://bootstrap.saltproject.io -o /tmp/install_salt.sh && \
-               sudo sh /tmp/install_salt.sh -P -N stable; then
+               sudo bash /tmp/install_salt.sh -P -N stable; then
                 log_success "salt-minion installed successfully via bootstrap script."
                 # Remove salt-minion from missing_deps so apt doesn't try again
                 missing_deps=( "${missing_deps[@]/salt-minion}" )
