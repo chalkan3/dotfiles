@@ -31,9 +31,8 @@ stow_dotfiles:
   cmd.run:
     - names:
       {% for package in stow_packages %}
-      - stow -d {{ salt['pillar.get']('home') }}/dotfiles {{ package }}
+      - /usr/bin/stow -d {{ salt['pillar.get']('home') }}/dotfiles -t {{ salt['pillar.get']('home') }} {{ package }}
       {% endfor %}
-    - cwd: {{ salt['pillar.get']('home') }}
     - runas: {{ salt['pillar.get']('user') }}
     - require:
       - cmd: clean_zsh_config # Ensure cleanup happens first
