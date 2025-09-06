@@ -192,7 +192,7 @@ EOF" || log_error "Failed to write temporary Pillar file."
 sudo chmod 600 "$TEMP_PILLAR_DIR/user_details.sls" || log_error "Failed to adjust permissions for temporary Pillar file."
 
 # Run salt-call using the manually created minion.conf and temporary pillar
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply || log_error "Failed to apply Salt states. Check logs above."
+sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply -l debug || log_error "Failed to apply Salt states. Check logs above."
 log_success "Salt states applied successfully! Your environment is almost ready!"
 
 log_step "Setting Zsh as Default Shell"
