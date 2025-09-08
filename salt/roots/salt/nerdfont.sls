@@ -12,7 +12,7 @@ fira_code_nerd_font_zip:
   file.managed:
     - name: /tmp/FiraCode.zip
     - source: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.zip
-    - source_hash: sha256=e4264a553965f6513e705a79623353662365345a367f58559a062ce93826583a
+    - source_hash: sha256=4ee8fbafecfc90460399b9828270b8ece30ccbf60b3ab875d64ff77696c6e262
     - unless: test -f {{ salt['pillar.get']('home') }}/.local/share/fonts/FiraCodeNerdFont-Regular.ttf
 
 # Extrai a fonte para o diretório de fontes do usuário
