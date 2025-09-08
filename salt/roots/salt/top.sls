@@ -1,4 +1,11 @@
 base:
   '*':
+    - packages
+    - user
+    - nvm
+    - lsd
+    - nerdfont
+    - lvim
+    - zinit
     - dotfiles
-    - test
+    - ssh_hardening
