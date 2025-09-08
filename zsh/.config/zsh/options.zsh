@@ -28,4 +28,4 @@ export HISTORY_IGNORE='ls:cd:cd -:pwd:exit:date:* --help'
 
 # --- Autosuggestions Color ---
 # Garante que as sugestões (comandos "fantasma") sejam visíveis.
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' # Cinza claro
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=cyan,bold' # Ciano brilhante

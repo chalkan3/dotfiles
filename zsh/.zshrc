@@ -1,4 +1,4 @@
-# ~/.zshrc - Arquivo Principal de Configuração do Zsh (Otimizado)
+# ~/.zshrc - Arquivo Principal de Configuração do Zsh (Otimizado e Corrigido)
 
 # --- 1. Carregador do Zinit (Gerenciador de Plugins) ---
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -29,7 +29,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# --- 4. Carregamento dos Plugins com Zinit (Otimizado) ---
+# --- 4. Carregamento dos Plugins com Zinit (Ordem Corrigida) ---
 
 # Anexos essenciais do Zinit
 zinit light-mode for \
@@ -43,9 +43,8 @@ zinit snippet OMZ::plugins/nvm/nvm.plugin.zsh
 
 # Plugins de UI e Utilitários Core
 zinit light romkatv/powerlevel10k                     # O prompt
-zinit light zsh-users/zsh-syntax-highlighting         # Realce de sintaxe
 zinit light zsh-users/zsh-autosuggestions           # Autosugestões
-zinit light zsh-users/zsh-history-substring-search    # Pesquisa no histórico (para atalhos)
+zinit light zsh-users/zsh-history-substring-search    # Pesquisa no histórico
 zinit ice lucid wait'0'; zinit light zsh-users/zsh-completions # Auto-completar avançado
 
 # Produtividade e Workflow
@@ -61,4 +60,7 @@ zinit ice on-load"zicompinit; zicdreplay" as"program" lucid for \
 
 # GitLab CLI completions
 zinit ice as"completion" lucid atclone"glab completion -s zsh > _glab" atpull"%atclone" src="_glab"
-zinit light gitlabhq/cli
+zinit light glab-cli/glab
+
+# O PLUGIN DE SYNTAX HIGHLIGHTING DEVE SER O ÚLTIMO A SER CARREGADO
+zinit light zsh-users/zsh-syntax-highlighting         # Realce de sintaxe
