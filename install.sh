@@ -46,7 +46,7 @@ else
     REAL_USER=$(whoami)
 fi
 REAL_HOME=$(eval echo "~$REAL_USER")
-DOTFILES_DIR="$REAL_HOME/.projects/dotfiles"
+DOTFILES_DIR="$REAL_HOME/dotfiles"
 
 # --- OS Detection ---
 OS_FAMILY=""
