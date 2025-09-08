@@ -171,13 +171,7 @@ fi
 
 
 
-log_step "Cloning Dotfiles Repository"
-if [ ! -d "$DOTFILES_DIR" ]; then
-    log_info "Cloning chalkan3/dotfiles into $DOTFILES_DIR..."
-    git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
-else
-    log_info "Dotfiles repository already exists at $DOTFILES_DIR. Skipping clone."
-fi
+
 
 log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
@@ -194,9 +188,16 @@ home: '$REAL_HOME'
 EOF" || log_error "Failed to write temporary Pillar file."
 sudo chmod 600 "$TEMP_PILLAR_DIR/user_details.sls" || log_error "Failed to adjust permissions for temporary Pillar file."
 
-# Run salt-call using the manually created minion.conf and temporary pillar
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply top -l debug || log_error "Failed to apply Salt states. Check logs above."
-log_success "Salt states applied successfully! Your environment is almost ready!"
+log_info "Applying initial Salt states (packages, user, ssh hardening)..."
+sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply top_initial -l debug || log_error "Failed to apply initial Salt states. Check logs above."
+log_success "Initial Salt states applied successfully!"
+
+log_step "Applying Dotfiles and Final Configuration for chalkan3"
+log_info "Applying dotfiles and final configurations for user 'chalkan3'..."
+# We need to run this as chalkan3, but salt-call needs sudo.
+# The dotfiles.sls state is designed to run stow as chalkan3.
+sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply top -l debug || log_error "Failed to apply dotfiles and final configurations. Check logs above."
+log_success "Dotfiles and final configurations applied successfully for chalkan3!"
 
 log_step "Setting Zsh as Default Shell"
 if command -v zsh &>/dev/null;
