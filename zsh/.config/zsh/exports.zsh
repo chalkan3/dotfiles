@@ -1,6 +1,9 @@
 # ~/.config/zsh/exports.zsh
 # All environment variables and PATH modifications.
 
+# Add ~/.local/bin to PATH
+export PATH="$HOME/.local/bin:$PATH"
+
 # Default Editor
 export EDITOR='lvim'
 
