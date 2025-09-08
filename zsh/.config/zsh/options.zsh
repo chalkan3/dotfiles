@@ -25,3 +25,7 @@ setopt HIST_SAVE_NO_DUPS      # Don't save duplicates in the history file
 
 # Don't save certain common commands to history
 export HISTORY_IGNORE='ls:cd:cd -:pwd:exit:date:* --help'
+
+# --- Autosuggestions Color ---
+# Garante que as sugestões (comandos "fantasma") sejam visíveis.
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' # Cinza claro

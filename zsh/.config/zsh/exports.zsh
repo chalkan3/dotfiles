@@ -1,4 +1,3 @@
-echo "DEBUG: Sourcing exports.zsh"
 # ~/.config/zsh/exports.zsh
 # All environment variables and PATH modifications.
 

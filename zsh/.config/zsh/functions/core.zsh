@@ -2,14 +2,14 @@ p() {
   ~/.config/zellij/scripts/ruby/bin/p
 }
 
-preexec() {
-  ~/.config/zellij/scripts/ruby/bin/set-title
-
-}
-
-precmd() {
-  ~/.config/zellij/scripts/ruby/bin/set-title
-}
+# preexec() {
+#   ~/.config/zellij/scripts/ruby/bin/set-title
+# 
+# }
+# 
+# precmd() {
+#   ~/.config/zellij/scripts/ruby/bin/set-title
+# }
 
 
 
