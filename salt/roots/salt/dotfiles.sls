@@ -6,6 +6,8 @@ dotfiles_repo:
     - name: https://github.com/chalkan3/dotfiles.git
     - target: {{ salt['pillar.get']('home') }}/dotfiles
     - user: {{ salt['pillar.get']('user') }}
+    - force_reset: True
+    - clean: True
     - require:
       
       - pkg: core_packages
