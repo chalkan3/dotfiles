@@ -185,11 +185,11 @@ file_client: local
 
 file_roots:
   base:
-    - $PWD/salt/roots/salt
+    - $(pwd)/salt/roots/salt
 
 pillar_roots:
   base:
-    - $PWD/salt/roots/pillar
+    - $(pwd)/salt/roots/pillar
 EOL" || log_error "Failed to write temporary minion.conf."
 sudo chmod 600 "$TEMP_SALT_CONFIG_DIR/minion.conf" || log_error "Failed to adjust permissions for temporary minion.conf."
 
