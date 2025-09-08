@@ -171,31 +171,18 @@ fi
 
 
 
+log_step "Cloning Dotfiles Repository"
+if [ ! -d "$DOTFILES_DIR" ]; then
+    log_info "Cloning chalkan3/dotfiles into $DOTFILES_DIR..."
+    git clone https://github.com/chalkan3/dotfiles.git "$DOTFILES_DIR" || log_error "Failed to clone dotfiles repository."
+else
+    log_info "Dotfiles repository already exists at $DOTFILES_DIR. Skipping clone."
+fi
+
 log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
 log_info "Salt is now configuring your system. This may take a while... 🦥"
-
-# Manually create minion.conf with absolute paths
-MINION_CONF="$DOTFILES_DIR/salt/minion"
-sudo bash -c "cat > $MINION_CONF <<EOL
-# Salt-minion configuration for masterless mode
-file_client: local
-
-file_roots:
-  base:
-    - $DOTFILES_DIR/salt/roots/salt
-
-pillar_roots:
-  base:
-    - $DOTFILES_DIR/salt/roots/pillar
-EOL"
-# The above `cat > $MINION_CONF <<EOL` is a heredoc, and the content within it is treated as a literal string. 
-# Therefore, any special characters like `$` or backticks within the heredoc are not interpreted by the shell.
-# The `sudo bash -c` is used to ensure that the redirection happens with root privileges, which is necessary if the DOTFILES_DIR is not owned by the current user.
-# The `EOL` marker signifies the end of the heredoc. 
-# The content of the heredoc is then written to the file specified by `$MINION_CONF`.
-# The `|| log_error "Failed to write minion.conf."` part is a standard shell construct to execute the `log_error` command if the preceding command fails.
 
 # Create temporary pillar file
 TEMP_PILLAR_DIR="/tmp/salt_temp_pillar"
