@@ -7,6 +7,6 @@ base:
     - nerdfont
     - lvim
     - zinit
-    # - dotfiles
+    - dotfiles
     - ssh_hardening
     # - test # Comment out test state
