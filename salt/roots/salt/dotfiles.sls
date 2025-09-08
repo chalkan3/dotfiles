@@ -4,8 +4,8 @@
 dotfiles_repo:
   git.latest:
     - name: https://github.com/chalkan3/dotfiles.git
-    - target: {{ salt['pillar.get']('home') }}/dotfiles
-    - user: {{ salt['pillar.get']('user') }}
+    - target: /home/chalkan3/dotfiles
+    - user: chalkan3
     - force_reset: True
     - clean: True
     - require:
@@ -23,7 +23,7 @@ apply_stow:
         stow --dir={{ salt['pillar.get']('home') }}/dotfiles lvim
         stow --dir={{ salt['pillar.get']('home') }}/dotfiles git
         stow --dir={{ salt['pillar.get']('home') }}/dotfiles zellij
-    - runas: {{ salt['pillar.get']('user') }}
+    - runas: chalkan3
     - require:
       - git: dotfiles_repo
 
