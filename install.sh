@@ -173,6 +173,26 @@ fi
 
 
 
+# Create temporary Salt config directory for initial bootstrap
+TEMP_SALT_CONFIG_DIR="/tmp/salt_temp_config"
+sudo mkdir -p "$TEMP_SALT_CONFIG_DIR" || log_error "Failed to create temporary Salt config directory."
+sudo chmod 700 "$TEMP_SALT_CONFIG_DIR" || log_error "Failed to adjust permissions for temporary Salt config directory."
+
+# Create temporary minion.conf for initial bootstrap
+sudo bash -c "cat > $TEMP_SALT_CONFIG_DIR/minion.conf <<EOL
+# Temporary Salt-minion configuration for initial bootstrap
+file_client: local
+
+file_roots:
+  base:
+    - $PWD/salt/roots/salt
+
+pillar_roots:
+  base:
+    - $PWD/salt/roots/pillar
+EOL" || log_error "Failed to write temporary minion.conf."
+sudo chmod 600 "$TEMP_SALT_CONFIG_DIR/minion.conf" || log_error "Failed to adjust permissions for temporary minion.conf."
+
 log_step "Applying Salt States (Main Configuration)"
 log_info "Installing Salt dependencies"
 sudo pip install contextvars # Ensure contextvars is available for salt-call
@@ -189,7 +209,7 @@ EOF" || log_error "Failed to write temporary Pillar file."
 sudo chmod 600 "$TEMP_PILLAR_DIR/user_details.sls" || log_error "Failed to adjust permissions for temporary Pillar file."
 
 log_info "Applying initial Salt states (packages, user, ssh hardening)..."
-sudo salt-call --local --config-dir="$DOTFILES_DIR/salt" --pillar-root="$TEMP_PILLAR_DIR" state.apply top_initial -l debug || log_error "Failed to apply initial Salt states. Check logs above."
+sudo salt-call --local --config-dir="$TEMP_SALT_CONFIG_DIR" --pillar-root="$TEMP_PILLAR_DIR" state.apply top_initial -l debug || log_error "Failed to apply initial Salt states. Check logs above."
 log_success "Initial Salt states applied successfully!"
 
 log_step "Applying Dotfiles and Final Configuration for chalkan3"
@@ -223,6 +243,8 @@ fi
 log_step "Finalizing and Cleaning Up"
 log_info "Removing temporary Pillar files..."
 sudo rm -rf "$TEMP_PILLAR_DIR" || log_warn "Failed to remove temporary Pillar files. Manual cleanup might be needed."
+log_info "Removing temporary Salt config directory..."
+sudo rm -rf "$TEMP_SALT_CONFIG_DIR" || log_warn "Failed to remove temporary Salt config directory. Manual cleanup might be needed."
 log_success "Cleanup complete!"
 
 echo -e "\n${GREEN}${BOLD}${CHECK_EMOJI} SETUP COMPLETE! ${RESET}"
