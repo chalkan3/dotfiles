@@ -184,11 +184,11 @@ file_client: local
 
 file_roots:
   base:
-    - $REAL_HOME/dotfiles/salt/roots/salt
+    - $DOTFILES_DIR/salt/roots/salt
 
 pillar_roots:
   base:
-    - $REAL_HOME/dotfiles/salt/roots/pillar
+    - $DOTFILES_DIR/salt/roots/pillar
 EOL"
 # The above `cat > $MINION_CONF <<EOL` is a heredoc, and the content within it is treated as a literal string. 
 # Therefore, any special characters like `$` or backticks within the heredoc are not interpreted by the shell.
