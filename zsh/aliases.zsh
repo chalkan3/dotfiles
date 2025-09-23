@@ -31,7 +31,7 @@ alias gld='git log --pretty=format:"%h %ad %s" --date=short --graph'
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup'
 alias ip="ipconfig getifaddr en0"
 alias reload="source ~/.zshrc"
-alias cat='bat'
+alias cat='batcat'
 
 # Salt (from original file)
 alias salt='sudo salt'
