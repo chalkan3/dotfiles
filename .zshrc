@@ -23,7 +23,10 @@ fi
 
 if command -v brew &> /dev/null; then
   source "$(brew --prefix)/opt/zinit/zinit.zsh"
+else
+  source "/opt/zinit/zinit.zsh"
 fi
+
 source ~/.zsh/plugins.zsh
 
 
