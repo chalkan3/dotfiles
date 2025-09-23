@@ -21,7 +21,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-source "$(brew --prefix)/opt/zinit/zinit.zsh"
+if command -v brew &> /dev/null; then
+  source "$(brew --prefix)/opt/zinit/zinit.zsh"
+fi
 source ~/.zsh/plugins.zsh
 
 
