@@ -1,8 +1,35 @@
 # ======================================================================
-# ZSHRC DINÂMICO E PORTÁTIL (Funciona para qualquer $HOME)
+# 1. ZINIT INSTALLATION & LOADER (O bloco que funciona)
 # ======================================================================
 
-# FUNÇÃO DE BOAS-VINDAS:
+# Define o caminho padrão e dinâmico (resolve para ~/.local/share/zinit)
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit"
+
+# Bloco de instalação Padrão do Zinit (Só roda se a pasta não existir)
+if [ ! -d "${ZINIT_HOME}/zinit.git" ]; then
+    echo "--- Zinit not found. Installing Zinit now... ---"
+    
+    # Cria o diretório se não existir
+    mkdir -p "$(dirname "${ZINIT_HOME}/zinit.git")"
+    
+    # Executa a instalação
+    if bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
+        echo "✅ Zinit installed successfully. Please close and reopen your shell."
+    else
+        echo "❌ FATAL ERROR: Zinit could not be installed. Check network/permissions."
+    fi
+fi
+
+# Carrega o Zinit (GARANTINDO que a função 'zinit' seja definida)
+if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
+    source "${ZINIT_HOME}/zinit.zsh"
+fi
+
+
+# ======================================================================
+# 2. FUNÇÃO DE BOAS-VINDAS E INSTANT PROMPT (Ajustes de UX)
+# ======================================================================
+
 welcome_message() {
   if [[ -o INTERACTIVE ]]; then
     local BLUE=$(printf '\e[34m')
@@ -10,7 +37,7 @@ welcome_message() {
     
     printf "\n%s" "$BLUE"
     
-    # Usa o hostname ($(%n)) para tornar a mensagem dinâmica
+    # Usa o nome da máquina/usuário atual
     printf " > chalkan3 :: %s < \n" "${(%):-%n}"
     
     printf "%s" "$RESET"
@@ -20,52 +47,28 @@ welcome_message() {
 welcome_message
 unset -f welcome_message
 
-# Load Powerlevel10k instant prompt if available (Usa $HOME)
+# Load Powerlevel10k instant prompt if available (deve ficar alto no zshrc)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 
-# Define o diretório de instalação do Zinit (Portátil e Padrão)
-# Isso resolve para ~/.local/share/zinit/zinit.git
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+# ======================================================================
+# 3. CARREGAMENTO DA CONFIGURAÇÃO (Onde Zinit é usado)
+# ======================================================================
 
-# ----------------------------------------------------------------------
-# ZINIT LOADER: Simplificado para carregar a instalação, sem instalar novamente.
-# Se a instalação foi feita corretamente, ele deve ser carregado aqui.
-# ----------------------------------------------------------------------
-
-# Tenta carregar Zinit do local padrão (~/.local/share/zinit/zinit.git)
-if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
-    source "${ZINIT_HOME}/zinit.zsh"
-
-# Verifica se foi instalado via Homebrew (Alternativa)
-elif command -v brew &> /dev/null && [ -f "$(brew --prefix)/opt/zinit/zinit.zsh" ]; then
-    source "$(brew --prefix)/opt/zinit/zinit.zsh"
-    
-# Se não for encontrado, instrui o usuário.
-else
-    echo "FATAL ERROR: Zinit not found. Please run the Zinit manual installation for user $USER."
-fi
-
-# ----------------------------------------------------------------------
-# END ZINIT LOADER
-# ----------------------------------------------------------------------
-
-
-# LOAD ZINIT PLUGINS (DEVE VIR *DEPOIS* que o comando Zinit for definido)
-# Usando $HOME para portabilidade
+# LOAD ZINIT PLUGINS (A linha mais importante: usa o comando 'zinit' definido acima)
 source "${HOME}/.zsh/plugins.zsh"
 
 
-# LOAD POWERLEVEL10K CONFIG (Usando $HOME)
+# LOAD POWERLEVEL10K CONFIG
 [[ ! -f "${HOME}/.p10k.zsh" ]] || source "${HOME}/.p10k.zsh"
 
 
-# LOAD OTHER CONFIGURATION FILES (Usando $HOME)
+# LOAD OTHER CONFIGURATION FILES
 source "${HOME}/.zsh/env.zsh"
 source "${HOME}/.zsh/aliases.zsh"
 source "${HOME}/.zsh/functions.zsh"
 
-# LOAD FZF CONFIG (Usando $HOME)
+# LOAD FZF CONFIG
 [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
