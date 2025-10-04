@@ -1,48 +1,34 @@
 # ======================================================================
-# 1. PATH SETUP & ZINIT INSTALLATION/LOADER (Com Link Simbólico)
+# ZSHRC: INSTALAÇÃO (Condicional) E CARREGAMENTO DE PLUGINS
 # ======================================================================
 
-# Adiciona o diretório bin local ao PATH (Crucial para que o link simbólico funcione)
-export PATH="$HOME/.local/bin:$PATH"
-
-# Define o caminho padrão e dinâmico
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit"
 ZINIT_BIN="${HOME}/.local/bin"
 
-# Bloco de instalação Padrão
+# ----------------------------------------------------------------------
+# Bloco de Instalação (Só roda se a pasta Zinit não existir)
+# ----------------------------------------------------------------------
 if [ ! -d "${ZINIT_HOME}/zinit.git" ]; then
     echo "--- Zinit não encontrado. Iniciando a instalação... ---"
     
-    # Cria diretórios necessários
     mkdir -p "${ZINIT_HOME}/zinit.git"
     mkdir -p "${ZINIT_BIN}"
-
-    # Executa a instalação
+    
     if bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
-        # CRIAÇÃO DO LINK SIMBÓLICO: Faz com que o 'zinit' seja um comando no PATH
+        # Cria o link simbólico (útil para o PATH)
         ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
-
-        echo "✅ Zinit instalado e link simbólico criado."
-        echo ">>>>> ⚠️ POR FAVOR, RECARREGUE SUA SHELL (execute 'exec zsh' ou 'exit'). ⚠️ <<<<<"
-        # Força o Zsh a recarregar para pegar o novo Zinit.
-        return
-    else
-        echo "❌ ERRO FATAL: Zinit não pôde ser instalado. Verifique rede/permissões."
+        
+        echo "✅ Zinit instalado com sucesso!"
+        echo ">>>>> ⚠️ POR FAVOR, ENCERRE E REABRA SUA SESSÃO (ou use 'exec zsh') para carregar o Zinit. ⚠️ <<<<<"
+        # Saída suave para forçar o reinício da shell
+        return 
     fi
 fi
 
-# Carrega o Zinit (Este código só roda se a instalação JÁ FOI FEITA)
-# O comando 'zinit' é definido aqui.
-if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
-    source "${ZINIT_HOME}/zinit.zsh"
-fi
-
-# Garante que o link simbólico do Zinit existe (para evitar erros em sessões não-login)
+# Garante que o link simbólico do Zinit existe após a instalação
 if [ -f "${ZINIT_HOME}/zinit.zsh" ] && [ ! -f "${ZINIT_BIN}/zinit" ]; then
-    echo "--- Link simbólico do Zinit não encontrado. Criando... ---"
     mkdir -p "${ZINIT_BIN}"
     ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
-    echo "✅ Link simbólico do Zinit criado."
 fi
 
 
@@ -72,11 +58,10 @@ fi
 
 
 # ======================================================================
-# 3. ZINIT ANNEXES (EXTENSÕES) - Devem carregar antes dos plugins
+# 3. ZINIT ANNEXES (Extensões) - Devem carregar antes dos plugins
 # ======================================================================
 
-# Load a few important annexes, without Turbo
-# Este bloco deve vir *DEPOIS* do 'source zinit.zsh' e *ANTES* dos seus plugins.
+# O comando 'zinit' já está definido pelo .zprofile
 zinit light-mode for \
     zdharma-continuum/zinit-annex-as-monitor \
     zdharma-continuum/zinit-annex-bin-gem-node \
