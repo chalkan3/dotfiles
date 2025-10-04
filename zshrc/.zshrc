@@ -1,5 +1,5 @@
 # ======================================================================
-# 1. ZINIT INSTALLATION & LOADER (O bloco que funciona)
+# 1. ZINIT INSTALLATION & LOADER (Com Bloco de Recarga Obrigatório)
 # ======================================================================
 
 # Define o caminho padrão e dinâmico (resolve para ~/.local/share/zinit)
@@ -7,20 +7,24 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit"
 
 # Bloco de instalação Padrão do Zinit (Só roda se a pasta não existir)
 if [ ! -d "${ZINIT_HOME}/zinit.git" ]; then
-    echo "--- Zinit not found. Installing Zinit now... ---"
+    echo "--- Zinit não encontrado. Iniciando a instalação agora... ---"
     
     # Cria o diretório se não existir
     mkdir -p "$(dirname "${ZINIT_HOME}/zinit.git")"
     
     # Executa a instalação
     if bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
-        echo "✅ Zinit installed successfully. Please close and reopen your shell."
+        echo "✅ Zinit instalado com sucesso!"
+        echo ">>>>> ⚠️ POR FAVOR, RECARREGUE SUA SHELL (execute 'exec zsh', 'exit' ou feche a janela). ⚠️ <<<<<"
+        # FORÇA A SAÍDA para que a shell reinicie e carregue a função 'zinit' corretamente
+        return
     else
-        echo "❌ FATAL ERROR: Zinit could not be installed. Check network/permissions."
+        echo "❌ ERRO FATAL: Zinit não pôde ser instalado. Verifique rede/permissões."
     fi
 fi
 
-# Carrega o Zinit (GARANTINDO que a função 'zinit' seja definida)
+# Carrega o Zinit (Este código só roda se a instalação JÁ FOI FEITA)
+# O comando 'zinit' é definido aqui.
 if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
     source "${ZINIT_HOME}/zinit.zsh"
 fi
@@ -57,7 +61,7 @@ fi
 # 3. CARREGAMENTO DA CONFIGURAÇÃO (Onde Zinit é usado)
 # ======================================================================
 
-# LOAD ZINIT PLUGINS (A linha mais importante: usa o comando 'zinit' definido acima)
+# LOAD ZINIT PLUGINS (O comando 'zinit' já está definido no passo 1)
 source "${HOME}/.zsh/plugins.zsh"
 
 
