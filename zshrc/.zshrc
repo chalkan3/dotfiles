@@ -21,7 +21,7 @@ if [ ! -d "${ZINIT_HOME}/zinit.git" ]; then
     if bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
         # CRIAÇÃO DO LINK SIMBÓLICO: Faz com que o 'zinit' seja um comando no PATH
         ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
-        
+
         echo "✅ Zinit instalado e link simbólico criado."
         echo ">>>>> ⚠️ POR FAVOR, RECARREGUE SUA SHELL (execute 'exec zsh' ou 'exit'). ⚠️ <<<<<"
         # Força o Zsh a recarregar para pegar o novo Zinit.
@@ -35,6 +35,14 @@ fi
 # O comando 'zinit' é definido aqui.
 if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
     source "${ZINIT_HOME}/zinit.zsh"
+fi
+
+# Garante que o link simbólico do Zinit existe (para evitar erros em sessões não-login)
+if [ -f "${ZINIT_HOME}/zinit.zsh" ] && [ ! -f "${ZINIT_BIN}/zinit" ]; then
+    echo "--- Link simbólico do Zinit não encontrado. Criando... ---"
+    mkdir -p "${ZINIT_BIN}"
+    ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
+    echo "✅ Link simbólico do Zinit criado."
 fi
 
 
@@ -64,11 +72,22 @@ fi
 
 
 # ======================================================================
-# 3. CARREGAMENTO DA CONFIGURAÇÃO (Plugins e Dotfiles)
+# 3. ZINIT ANNEXES (EXTENSÕES) - Devem carregar antes dos plugins
 # ======================================================================
 
-# LOAD ZINIT PLUGINS (O comando 'zinit' já está definido no passo 1)
-# O Zsh agora pode encontrar o 'zinit' antes de ler esta linha.
+# Load a few important annexes, without Turbo
+# Este bloco deve vir *DEPOIS* do 'source zinit.zsh' e *ANTES* dos seus plugins.
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+# ======================================================================
+# 4. CARREGAMENTO DA CONFIGURAÇÃO (Plugins e Dotfiles)
+# ======================================================================
+
+# LOAD ZINIT PLUGINS
 source "${HOME}/.zsh/plugins.zsh"
 
 
