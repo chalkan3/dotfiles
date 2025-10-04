@@ -1,4 +1,4 @@
- welcome_message() {
+welcome_message() {
   if [[ -o INTERACTIVE ]]; then
     local BLUE=$(printf '\e[34m')
     local RESET=$(printf '\e[0m')
@@ -17,20 +17,18 @@ welcome_message
 
 unset -f welcome_message
 
-# Load Powerlevel10k instant prompt if available
+# Load Powerlevel10k instant prompt if available (must be near the top)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 
-# ----------------------------------------------------------------------
-# PORTABLE LOGIC FOR ZINIT INSTALLATION AND LOADING
-# Checks for existence, installs if not found, and sources it.
-# ----------------------------------------------------------------------
-
-# Define the base directory for Zinit using portable XDG standard:
-# $XDG_DATA_HOME or default to $HOME/.local/share/zinit
+# Define the base directory for Zinit (Portable)
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit"
+
+# ----------------------------------------------------------------------
+# ZINIT LOADER: Ensures Zinit is defined before any plugins are loaded.
+# ----------------------------------------------------------------------
 
 # 1. Try to load Zinit from the standard install location
 if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
@@ -40,7 +38,7 @@ if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
 elif command -v brew &> /dev/null && [ -f "$(brew --prefix)/opt/zinit/zinit.zsh" ]; then
     source "$(brew --prefix)/opt/zinit/zinit.zsh"
 
-# 3. If not found anywhere, install it
+# 3. If Zinit is not found, install it.
 else
     echo "--- Zinit not found. Installing Zinit... ---"
     
@@ -51,21 +49,17 @@ else
     if ! bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
         echo "ERROR: Failed to install Zinit. Check your connection or permissions."
     else
-        echo "Zinit installed successfully. Reloading shell..."
-        
-        # Source Zinit after successful installation
-        if [ -f "${ZINIT_HOME}/zinit.zsh" ]; then
-            source "${ZINIT_HOME}/zinit.zsh"
-        fi
+        echo "Zinit installed successfully. Please close and reopen your shell."
+        # Zinit will be sourced (loaded) successfully on the NEXT shell launch.
     fi
 fi
 
 # ----------------------------------------------------------------------
-# END ZINIT LOADING
+# END ZINIT LOADER
 # ----------------------------------------------------------------------
 
 
-# LOAD ZINIT PLUGINS (MUST BE SOURCED AFTER ZINIT ITSELF)
+# LOAD ZINIT PLUGINS (MUST BE SOURCED *AFTER* ZINIT ITSELF IS LOADED)
 # Using $HOME for portability
 source "${HOME}/.zsh/plugins.zsh"
 
