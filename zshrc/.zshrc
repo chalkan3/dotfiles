@@ -1,40 +1,12 @@
-# ======================================================================
-# ZSHRC: INSTALAÇÃO (Condicional) E CARREGAMENTO DE PLUGINS
-# ======================================================================
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit.git"
 
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit"
-ZINIT_BIN="${HOME}/.local/bin"
-
-# ----------------------------------------------------------------------
-# Bloco de Instalação (Só roda se a pasta Zinit não existir)
-# ----------------------------------------------------------------------
-if [ ! -d "${ZINIT_HOME}/zinit.git" ]; then
-    echo "--- Zinit não encontrado. Iniciando a instalação... ---"
-    
-    mkdir -p "${ZINIT_HOME}/zinit.git"
-    mkdir -p "${ZINIT_BIN}"
-    
-    if bash -c "$(curl -fsSL https://git.io/zinit-install)"; then
-        # Cria o link simbólico (útil para o PATH)
-        ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
-        
-        echo "✅ Zinit instalado com sucesso!"
-        echo ">>>>> ⚠️ POR FAVOR, ENCERRE E REABRA SUA SESSÃO (ou use 'exec zsh') para carregar o Zinit. ⚠️ <<<<<"
-        # Saída suave para forçar o reinício da shell
-        return 
-    fi
+if [ ! -d "${ZINIT_HOME}" ]; then
+    mkdir -p "$(dirname $ZINIT_HOME)" 
+    git clone https://github.com/zdharma-continuum/zinit.git "${ZINIT_HOME}"
 fi
 
-# Garante que o link simbólico do Zinit existe após a instalação
-if [ -f "${ZINIT_HOME}/zinit.zsh" ] && [ ! -f "${ZINIT_BIN}/zinit" ]; then
-    mkdir -p "${ZINIT_BIN}"
-    ln -sf "${ZINIT_HOME}/zinit.zsh" "${ZINIT_BIN}/zinit"
-fi
+source "${ZINIT_HOME}/zinit.zsh"
 
-
-# ======================================================================
-# 2. FUNÇÃO DE BOAS-VINDAS E INSTANT PROMPT (UX)
-# ======================================================================
 
 welcome_message() {
   if [[ -o INTERACTIVE ]]; then
@@ -72,18 +44,12 @@ zinit light-mode for \
 # 4. CARREGAMENTO DA CONFIGURAÇÃO (Plugins e Dotfiles)
 # ======================================================================
 
-# LOAD ZINIT PLUGINS
 source "${HOME}/.zsh/plugins.zsh"
 
-
-# LOAD POWERLEVEL10K CONFIG
 [[ ! -f "${HOME}/.p10k.zsh" ]] || source "${HOME}/.p10k.zsh"
 
-
-# LOAD OTHER CONFIGURATION FILES
 source "${HOME}/.zsh/env.zsh"
 source "${HOME}/.zsh/aliases.zsh"
 source "${HOME}/.zsh/functions.zsh"
 
-# LOAD FZF CONFIG
 [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
