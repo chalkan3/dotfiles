@@ -557,8 +557,8 @@ show_startup_tips false
 themes {
     tokyonight {
         fg "#c0caf5"
-        bg "#1a1b26"
-        black "#15161e"
+        bg "#16161e"      // Darker blue-black
+        black "#0d0d15"   // Even darker for contrast
         red "#f7768e"
         green "#9ece6a"
         yellow "#e0af68"
