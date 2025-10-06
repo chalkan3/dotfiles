@@ -1,0 +1,53 @@
+# ═══════════════════════════════════════════════════════════════════════
+# 🔐 Security - Never commit sensitive files
+# ═══════════════════════════════════════════════════════════════════════
+
+# Environment files with secrets
+.env
+*.env
+!.env.example
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.pem
+*.key
+
+# API keys and tokens
+*_token
+*_key
+*_secret
+credentials.json
+secrets.*
+
+# Password files
+password*
+passwd*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Zsh
+.zcompdump*
+.zsh_history
+
+# Cache
+*.cache
+.cache/
+__pycache__/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
