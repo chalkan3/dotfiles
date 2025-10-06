@@ -31,9 +31,11 @@ alias .....="cd ../../../.."
 alias ~="cd ~"
 alias -- -="cd -"  # Go back to previous directory
 
-# Use zoxide for smart cd (learns your habits)
-alias cd="z"
-alias cdi="zi"  # Interactive zoxide
+# Use zoxide for smart cd (learns your habits) - only if installed
+if command -v zoxide &> /dev/null; then
+    alias cd="z"
+    alias cdi="zi"  # Interactive zoxide
+fi
 
 # ───────────────────────────────────────────────────────────────────────
 # 📂 File Listing (using eza/lsd)
