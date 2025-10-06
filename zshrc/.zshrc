@@ -5,6 +5,9 @@
 # ───────────────────────────────────────────────────────────────────────
 # ⚡ Powerlevel10k Instant Prompt (must be at top for performance)
 # ───────────────────────────────────────────────────────────────────────
+# Suppress instant prompt warnings (welcome message is intentional)
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
