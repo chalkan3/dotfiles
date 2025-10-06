@@ -72,18 +72,104 @@ setopt NO_CHECK_JOBS         # Don't report on jobs when shell exits
 setopt NO_BEEP               # Don't beep on errors
 
 # ───────────────────────────────────────────────────────────────────────
-# 🎹 Key Bindings
+# ⌨️  Keybindings Avançados
 # ───────────────────────────────────────────────────────────────────────
 bindkey -e                   # Use emacs keybindings
 
-# Additional useful keybindings
-bindkey '^[[1;5C' forward-word          # Ctrl+Right arrow
-bindkey '^[[1;5D' backward-word         # Ctrl+Left arrow
-bindkey '^[[H' beginning-of-line        # Home key
-bindkey '^[[F' end-of-line              # End key
-bindkey '^[[3~' delete-char             # Delete key
-bindkey '^[[A' up-line-or-search        # Up arrow
-bindkey '^[[B' down-line-or-search      # Down arrow
+# ───────────────────────────────────────────────────────────────────────
+# 🏃 Navegação entre Palavras
+# ───────────────────────────────────────────────────────────────────────
+# Option/Alt + → : próxima palavra
+# Option/Alt + ← : palavra anterior
+bindkey '^[f' forward-word                        # Alt/Option + f
+bindkey '^[b' backward-word                       # Alt/Option + b
+bindkey '^[[1;3C' forward-word                    # Alt/Option + Right
+bindkey '^[[1;3D' backward-word                   # Alt/Option + Left
+
+# Ctrl + → : próxima palavra (alternativo)
+# Ctrl + ← : palavra anterior (alternativo)
+bindkey '^[[1;5C' forward-word                    # Ctrl + Right
+bindkey '^[[1;5D' backward-word                   # Ctrl + Left
+
+# ───────────────────────────────────────────────────────────────────────
+# ✂️  Deletar Palavras
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + w : deleta palavra anterior (padrão Zsh)
+# Alt/Option + d : deleta próxima palavra
+bindkey '^[d' kill-word                           # Alt/Option + d
+# Alt/Option + Backspace : deleta palavra anterior
+bindkey '^[^?' backward-kill-word                 # Alt/Option + Backspace
+
+# ───────────────────────────────────────────────────────────────────────
+# 🎯 Início e Fim da Linha
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + a : início da linha
+# Ctrl + e : fim da linha
+bindkey '^A' beginning-of-line                    # Ctrl + a
+bindkey '^E' end-of-line                          # Ctrl + e
+
+# Home e End (compatibilidade com diferentes terminais)
+bindkey '^[[H' beginning-of-line                  # Home
+bindkey '^[[F' end-of-line                        # End
+bindkey '^[[1~' beginning-of-line                 # Home (alternativo)
+bindkey '^[[4~' end-of-line                       # End (alternativo)
+
+# ───────────────────────────────────────────────────────────────────────
+# 🗑️  Deletar Linhas
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + k : deleta do cursor até o fim da linha
+# Ctrl + u : deleta do cursor até o início da linha
+bindkey '^K' kill-line                            # Ctrl + k
+bindkey '^U' backward-kill-line                   # Ctrl + u
+
+# ───────────────────────────────────────────────────────────────────────
+# 🔄 Manipulação de Texto
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + t : troca letra atual com anterior
+# Alt/Option + t : troca palavra atual com anterior
+bindkey '^T' transpose-chars                      # Ctrl + t
+bindkey '^[t' transpose-words                     # Alt/Option + t
+
+# Alt/Option + u : palavra atual para MAIÚSCULAS
+# Alt/Option + l : palavra atual para minúsculas
+# Alt/Option + c : Capitaliza palavra atual
+bindkey '^[u' up-case-word                        # Alt/Option + u
+bindkey '^[l' down-case-word                      # Alt/Option + l
+bindkey '^[c' capitalize-word                     # Alt/Option + c
+
+# ───────────────────────────────────────────────────────────────────────
+# 📋 Clipboard (Kill Ring)
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + y : cola último texto deletado (yank)
+# Alt/Option + y : circula entre textos deletados
+bindkey '^Y' yank                                 # Ctrl + y
+bindkey '^[y' yank-pop                            # Alt/Option + y
+
+# ───────────────────────────────────────────────────────────────────────
+# 🔍 Busca e Histórico
+# ───────────────────────────────────────────────────────────────────────
+# Ctrl + r : busca reversa no histórico
+bindkey '^R' history-incremental-search-backward  # Ctrl + r
+
+# Setas para busca no histórico
+bindkey '^[[A' up-line-or-search                  # Up arrow
+bindkey '^[[B' down-line-or-search                # Down arrow
+
+# ───────────────────────────────────────────────────────────────────────
+# 🆕 Outros Atalhos Úteis
+# ───────────────────────────────────────────────────────────────────────
+# Delete key
+bindkey '^[[3~' delete-char                       # Delete
+bindkey '^[[3;5~' kill-word                       # Ctrl + Delete
+
+# Ctrl + _ ou Ctrl + / : desfaz última edição
+bindkey '^_' undo                                 # Ctrl + _
+bindkey '^/' undo                                 # Ctrl + / (alternativo)
+
+# Ctrl + x + Ctrl + e : abre comando atual no $EDITOR
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line                  # Ctrl + x, Ctrl + e
 
 # ───────────────────────────────────────────────────────────────────────
 # 🚀 Performance
