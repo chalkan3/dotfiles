@@ -2,6 +2,9 @@
 # ⚡ Advanced Zsh Features - Sistema Imponente
 # ═══════════════════════════════════════════════════════════════════════
 
+# Remove any existing aliases to avoid conflicts
+unalias gstatus 2>/dev/null
+
 # ───────────────────────────────────────────────────────────────────────
 # ⏱️  Command Timing - Mostra tempo de execução de comandos
 # ───────────────────────────────────────────────────────────────────────

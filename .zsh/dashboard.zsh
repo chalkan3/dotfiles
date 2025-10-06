@@ -2,6 +2,9 @@
 # 📊 Terminal Dashboard - Sistema Imponente
 # ═══════════════════════════════════════════════════════════════════════
 
+# Remove any existing alias to avoid conflicts
+unalias dashboard 2>/dev/null
+
 # Show system dashboard
 dashboard() {
     local cols=$(tput cols)
