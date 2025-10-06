@@ -1,0 +1,13 @@
+// Compact Layout - Minimal, single pane
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+    }
+
+    tab name="main" focus=true split_direction="vertical" {
+        pane
+    }
+}

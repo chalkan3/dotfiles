@@ -1,0 +1,50 @@
+// Ops Layout - System monitoring and management
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    tab name="system" focus=true {
+        pane split_direction="vertical" {
+            pane split_direction="horizontal" size="50%" {
+                // CPU & Memory
+                pane name="htop" {
+                    command "htop"
+                }
+                // Disk usage
+                pane name="disk" {
+                    command "watch"
+                    args "-n" "2" "df" "-h"
+                }
+            }
+            pane split_direction="horizontal" size="50%" {
+                // Network
+                pane name="network"
+                // Docker stats
+                pane name="docker" {
+                    command "watch"
+                    args "-n" "2" "docker" "ps"
+                }
+            }
+        }
+    }
+
+    tab name="logs" {
+        pane split_direction="horizontal" {
+            pane name="syslog"
+            pane name="app-logs"
+        }
+    }
+
+    tab name="k8s" {
+        pane {
+            command "k9s"
+        }
+    }
+}

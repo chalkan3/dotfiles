@@ -1,0 +1,29 @@
+// Development Layout - Editor on left, terminal on right
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    tab name="dev" focus=true {
+        pane split_direction="vertical" {
+            pane size="65%" {
+                // Main editor pane
+                command "nvim"
+                args "."
+                focus true
+            }
+            pane split_direction="horizontal" {
+                // Terminal for commands
+                pane size="50%"
+                // Logs/output pane
+                pane size="50%"
+            }
+        }
+    }
+}

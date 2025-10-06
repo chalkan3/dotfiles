@@ -1,0 +1,46 @@
+// Fullstack Layout - Editor, Server, Database, Logs
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    tab name="code" focus=true {
+        pane split_direction="vertical" {
+            // Editor (60%)
+            pane size="60%" {
+                command "nvim"
+                args "."
+                focus true
+            }
+            // Right side split
+            pane split_direction="horizontal" size="40%" {
+                // Server/Backend
+                pane size="50%" name="server" {
+                    // Start your dev server here
+                }
+                // Database/Frontend
+                pane size="50%" name="db"
+            }
+        }
+    }
+
+    tab name="logs" {
+        pane split_direction="horizontal" {
+            pane name="access-logs"
+            pane name="error-logs"
+        }
+    }
+
+    tab name="docker" {
+        pane {
+            command "docker"
+            args "ps"
+        }
+    }
+}
