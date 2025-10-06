@@ -239,4 +239,75 @@ return {
             automatic_installation = true,
         },
     },
+
+    -- 💡 LSP UI Avançado
+    {
+        "nvimdev/lspsaga.nvim",
+        event = "LspAttach",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = {
+            ui = {
+                border = "rounded",
+                code_action = "",
+            },
+            lightbulb = {
+                enable = false,  -- usando nvim-lightbulb separado
+            },
+            symbol_in_winbar = {
+                enable = true,  -- breadcrumbs no topo
+            },
+            code_action = {
+                num_shortcut = true,
+                show_server_name = true,
+                keys = {
+                    quit = "q",
+                    exec = "<CR>",
+                },
+            },
+            diagnostic = {
+                border_follow = true,
+                diagnostic_only_current = false,
+            },
+            finder = {
+                keys = {
+                    edit = "<CR>",
+                    vsplit = "v",
+                    split = "s",
+                    quit = "q",
+                },
+            },
+        },
+        keys = {
+            { "gd", "<cmd>Lspsaga goto_definition<cr>", desc = "Goto Definition" },
+            { "gp", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek Definition" },
+            { "gr", "<cmd>Lspsaga finder<cr>", desc = "LSP Finder" },
+            { "<leader>ca", "<cmd>Lspsaga code_action<cr>", desc = "Code Action" },
+            { "<leader>rn", "<cmd>Lspsaga rename<cr>", desc = "Rename" },
+            { "<leader>pd", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek Definition" },
+            { "<leader>ld", "<cmd>Lspsaga show_line_diagnostics<cr>", desc = "Line Diagnostics" },
+            { "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Prev Diagnostic" },
+            { "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Next Diagnostic" },
+            { "K", "<cmd>Lspsaga hover_doc<cr>", desc = "Hover Doc" },
+            { "<leader>o", "<cmd>Lspsaga outline<cr>", desc = "Outline" },
+        },
+    },
+
+    -- 💡 Lightbulb para Code Actions
+    {
+        "kosayoda/nvim-lightbulb",
+        event = "LspAttach",
+        opts = {
+            sign = {
+                enabled = true,
+                text = "",
+                hl = "DiagnosticSignInfo",
+            },
+            virtual_text = {
+                enabled = false,
+            },
+            autocmd = {
+                enabled = true,
+            },
+        },
+    },
 }

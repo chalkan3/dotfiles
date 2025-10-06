@@ -1,4 +1,12 @@
 return {
+    -- ⚡ Performance - Cache de módulos Lua
+    {
+        "lewis6991/impatient.nvim",
+        config = function()
+            require("impatient")
+        end
+    },
+
     {
         "nvim-telescope/telescope.nvim",
         branch = "0.1.x",

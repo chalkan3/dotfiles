@@ -463,4 +463,48 @@ return {
             enable_tailwind = true,
         },
     },
+
+    -- 🧘 Zen Mode - Foco total
+    {
+        "folke/zen-mode.nvim",
+        cmd = "ZenMode",
+        keys = {
+            { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" }
+        },
+        opts = {
+            window = {
+                width = 120,
+                options = {
+                    number = false,
+                    relativenumber = false,
+                    signcolumn = "no",
+                    cursorline = false,
+                }
+            },
+            plugins = {
+                gitsigns = { enabled = false },
+                tmux = { enabled = false },
+                kitty = {
+                    enabled = true,
+                    font = "+4",
+                },
+            },
+        },
+    },
+
+    -- 🎨 Color Picker Interativo
+    {
+        "uga-rosa/ccc.nvim",
+        cmd = { "CccPick", "CccConvert", "CccHighlighterEnable" },
+        keys = {
+            { "<leader>cp", "<cmd>CccPick<cr>", desc = "Color Picker" },
+            { "<leader>cc", "<cmd>CccConvert<cr>", desc = "Color Convert" },
+        },
+        opts = {
+            highlighter = {
+                auto_enable = true,
+                lsp = true,
+            },
+        },
+    },
 }
