@@ -103,9 +103,16 @@ dirinfo() {
     local size=$(du -sh "$dir" 2>/dev/null | awk '{print $1}')
     printf "\033[90m├──\033[0m \033[32mTamanho:\033[0m    $size\n"
 
-    # Permissions
-    local perms=$(stat -f "%Sp" "$dir" 2>/dev/null || stat -c "%A" "$dir" 2>/dev/null)
-    printf "\033[90m├──\033[0m \033[32mPermissões:\033[0m $perms\n"
+    # Permissions (cross-platform)
+    local perms=""
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS (BSD stat)
+        perms=$(stat -f "%Sp" "$dir" 2>/dev/null)
+    else
+        # Linux (GNU stat)
+        perms=$(stat -c "%A" "$dir" 2>/dev/null)
+    fi
+    printf "\033[90m├──\033[0m \033[32mPermissões:\033[0m ${perms:-N/A}\n"
 
     # Git info if in repo
     if git rev-parse --git-dir > /dev/null 2>&1; then

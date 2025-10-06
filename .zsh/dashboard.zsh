@@ -76,15 +76,18 @@ dashboard() {
     fi
     printf "\n"
 
-    # Memory Info (if available)
+    # Memory Info (cross-platform)
     printf "${bold}${cyan}🧠 Memory${reset}\n"
     if command -v free &> /dev/null; then
-        free -h | awk '/^Mem:/ {printf "'${gray}'└──'${reset}' '${green}'RAM:'${reset}'       %s / %s (%.1f%%)\n", $3, $2, ($3/$2)*100}'
+        # Linux (Ubuntu, Arch, etc)
+        free -h | awk '/^Mem:/ {printf "'${gray}'└──'${reset}' '${green}'RAM:'${reset}'       %s / %s\n", $3, $2}'
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS memory info
-        local total_mem=$(sysctl -n hw.memsize | awk '{print $0/1073741824}')
-        local used_mem=$(vm_stat | awk '/Pages active/ {print $3}' | sed 's/\.//' | awk '{print ($1*4096)/1073741824}')
-        printf "${gray}└──${reset} ${green}RAM:${reset}       %.1fGB / %.0fGB\n" $used_mem $total_mem
+        # macOS
+        local total_mem=$(sysctl -n hw.memsize 2>/dev/null | awk '{printf "%.1fGB", $0/1073741824}')
+        local used_mem=$(vm_stat 2>/dev/null | awk '/Pages active/ {print $3}' | sed 's/\.//' | awk '{printf "%.1fGB", ($1*4096)/1073741824}')
+        printf "${gray}└──${reset} ${green}RAM:${reset}       ${used_mem:-N/A} / ${total_mem:-N/A}\n"
+    else
+        printf "${gray}└──${reset} ${green}RAM:${reset}       N/A\n"
     fi
     printf "\n"
 
@@ -94,12 +97,21 @@ dashboard() {
     printf "${gray}└──${reset} ${green}Total:${reset}     $total_procs processos\n"
     printf "\n"
 
-    # Network Info
+    # Network Info (cross-platform)
     printf "${bold}${cyan}🌐 Network${reset}\n"
-    if command -v ifconfig &> /dev/null; then
-        local ip=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
-        printf "${gray}└──${reset} ${green}IP:${reset}        ${ip:-N/A}\n"
+    local ip=""
+    if command -v ip &> /dev/null; then
+        # Linux modern (ip command)
+        ip=$(ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v 127.0.0.1 | head -1)
+    elif command -v ifconfig &> /dev/null; then
+        # macOS or Linux with ifconfig
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            ip=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+        else
+            ip=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d: -f2 | head -1)
+        fi
     fi
+    printf "${gray}└──${reset} ${green}IP:${reset}        ${ip:-N/A}\n"
     printf "\n"
 
     # Recent Commands
