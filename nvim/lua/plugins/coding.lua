@@ -86,7 +86,6 @@ return {
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-nvim-lsp-signature-help",
-            "zbirenbaum/copilot-cmp",
             "hrsh7th/cmp-nvim-lua",
             "hrsh7th/cmp-calc",
             "onsails/lspkind.nvim",
@@ -95,7 +94,6 @@ return {
             local cmp = require("cmp")
             local luasnip = require("luasnip")
             local lspkind = require("lspkind")
-            require("copilot_cmp").setup({})
 
             return {
                 completion = {
@@ -120,9 +118,6 @@ return {
                         mode = "symbol_text",
                         maxwidth = 50,
                         ellipsis_char = "...",
-                        symbol_map = {
-                            Copilot = "",
-                        },
                     }),
                 },
                 mapping = cmp.mapping.preset.insert({
@@ -134,14 +129,13 @@ return {
                     ["<C-Space>"] = cmp.mapping.complete(),
                 }),
                 sources = cmp.config.sources({
-                    { name = "copilot", priority = 1000 },
-                    { name = "nvim_lsp", priority = 900 },
-                    { name = "luasnip", priority = 800 },
-                    { name = "nvim_lua", priority = 700 },
-                    { name = "buffer", priority = 500 },
-                    { name = "path", priority = 400 },
-                    { name = "nvim_lsp_signature_help", priority = 300 },
-                    { name = "calc", priority = 200 },
+                    { name = "nvim_lsp", priority = 1000 },
+                    { name = "luasnip", priority = 900 },
+                    { name = "nvim_lua", priority = 800 },
+                    { name = "buffer", priority = 700 },
+                    { name = "path", priority = 600 },
+                    { name = "nvim_lsp_signature_help", priority = 500 },
+                    { name = "calc", priority = 400 },
                 }),
             }
         end
