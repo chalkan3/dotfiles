@@ -6,4 +6,5 @@ return {
   { import = "plugins.productivity" },
   { import = "plugins.navigation" },
   { import = "plugins.formatting" },
+  { import = "plugins.sloth" }, -- 🦥 Sloth Runner DSL
 }
