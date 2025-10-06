@@ -2,6 +2,19 @@
 # 🔧 Auto-install Missing Tools
 # ═══════════════════════════════════════════════════════════════════════
 # Automatically installs essential CLI tools if they're missing
+#
+# ✅ Supported Systems:
+#   - macOS (Homebrew)
+#   - Ubuntu/Debian (apt)
+#   - Arch Linux (pacman)
+#   - Fedora/RHEL (dnf)
+#
+# 📝 Notes:
+#   - Ubuntu: eza requires adding third-party repo
+#   - Ubuntu: fd-find installs as 'fdfind' command (alias handled automatically)
+#   - Ubuntu: bat installs as 'batcat' command (alias handled automatically)
+#   - Arch: All tools available in official repos
+#   - Checks only once per day to avoid slowing down shell startup
 
 # List of essential tools
 ESSENTIAL_TOOLS=(
@@ -48,13 +61,20 @@ get_install_cmd() {
             case $tool in
                 fd) echo "sudo apt install -y fd-find" ;;
                 bat) echo "sudo apt install -y bat" ;;
-                eza) echo "sudo apt install -y eza" ;;
+                eza)
+                    # eza requires adding a repository on Ubuntu/Debian
+                    echo "sudo mkdir -p /etc/apt/keyrings && wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg && echo 'deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main' | sudo tee /etc/apt/sources.list.d/gierens.list && sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list && sudo apt update && sudo apt install -y eza"
+                    ;;
                 ripgrep) echo "sudo apt install -y ripgrep" ;;
-                git-delta) echo "sudo apt install -y git-delta" ;;
+                git-delta)
+                    # git-delta may not be in older Ubuntu versions, install from GitHub releases
+                    echo "wget -q https://github.com/dandavison/delta/releases/download/0.17.0/git-delta_0.17.0_amd64.deb -O /tmp/git-delta.deb && sudo dpkg -i /tmp/git-delta.deb && rm /tmp/git-delta.deb"
+                    ;;
                 *) echo "sudo apt install -y $tool" ;;
             esac
             ;;
         pacman)
+            # Arch Linux - most tools are in official repos
             case $tool in
                 ripgrep) echo "sudo pacman -S --noconfirm ripgrep" ;;
                 git-delta) echo "sudo pacman -S --noconfirm git-delta" ;;
