@@ -30,15 +30,18 @@ fi
 # ───────────────────────────────────────────────────────────────────────
 # 🔌 Zinit Plugin Manager
 # ───────────────────────────────────────────────────────────────────────
-if [[ ! -f $(brew --prefix)/opt/zinit/zinit.zsh ]]; then
+# Cross-platform zinit installation
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+if [[ ! -f "${ZINIT_HOME}/zinit.zsh" ]]; then
     print -P "%F{33}▓▒░ %F{220}Installing zinit (zdharma-continuum/zinit)…%f"
-    command mkdir -p "$(brew --prefix)/opt/zinit" && command chmod g-rwX "$(brew --prefix)/opt/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$(brew --prefix)/opt/zinit" && \
+    command mkdir -p "$(dirname ${ZINIT_HOME})" && command chmod g-rwX "$(dirname ${ZINIT_HOME})"
+    command git clone https://github.com/zdharma-continuum/zinit "${ZINIT_HOME}" && \
         print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
         print -P "%F{160}▓▒░ The clone has failed.%f%b"
 fi
 
-source "$(brew --prefix)/opt/zinit/zinit.zsh"
+source "${ZINIT_HOME}/zinit.zsh"
 
 # ───────────────────────────────────────────────────────────────────────
 # ⚙️  Zsh Options & Behavior

@@ -20,8 +20,20 @@ export PATH="$HOME/go/bin:$PATH"
 # ───────────────────────────────────────────────────────────────────────
 # 🐍 Python / Lua
 # ───────────────────────────────────────────────────────────────────────
-export LUA_PATH="/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;;"
-export LUA_CPATH="/opt/homebrew/lib/lua/5.4/?.so;;"
+# Cross-platform Lua paths
+if [[ -d "/opt/homebrew/share/lua" ]]; then
+    # macOS Homebrew (Apple Silicon)
+    export LUA_PATH="/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;;"
+    export LUA_CPATH="/opt/homebrew/lib/lua/5.4/?.so;;"
+elif [[ -d "/usr/local/share/lua" ]]; then
+    # macOS Homebrew (Intel) or Linux with /usr/local
+    export LUA_PATH="/usr/local/share/lua/5.4/?.lua;/usr/local/share/lua/5.4/?/init.lua;;"
+    export LUA_CPATH="/usr/local/lib/lua/5.4/?.so;;"
+elif [[ -d "/usr/share/lua" ]]; then
+    # Linux standard paths
+    export LUA_PATH="/usr/share/lua/5.4/?.lua;/usr/share/lua/5.4/?/init.lua;;"
+    export LUA_CPATH="/usr/lib/lua/5.4/?.so;;"
+fi
 
 # ───────────────────────────────────────────────────────────────────────
 # 💎 Ruby (rbenv)
@@ -103,10 +115,12 @@ export LC_ALL=en_US.UTF-8
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # ───────────────────────────────────────────────────────────────────────
-# 🎯 Homebrew
+# 🎯 Homebrew (macOS only)
 # ───────────────────────────────────────────────────────────────────────
-export HOMEBREW_NO_ANALYTICS=1  # Disable analytics
-export HOMEBREW_NO_AUTO_UPDATE=1  # Disable auto-update (update manually with 'brewup')
+if command -v brew &> /dev/null; then
+    export HOMEBREW_NO_ANALYTICS=1  # Disable analytics
+    export HOMEBREW_NO_AUTO_UPDATE=1  # Disable auto-update (update manually with 'brewup')
+fi
 
 # ───────────────────────────────────────────────────────────────────────
 # 📦 Go

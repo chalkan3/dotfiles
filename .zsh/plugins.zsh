@@ -65,17 +65,26 @@ zinit ice wait lucid
 zinit light MichaelAquilina/zsh-you-should-use
 
 # ───────────────────────────────────────────────────────────────────────
-# 🔧 CLI Tools Initialization (installed via brew)
+# 🔧 CLI Tools Initialization
 # ───────────────────────────────────────────────────────────────────────
-# Note: These should be installed via brew:
-# brew install zoxide eza bat fd ripgrep git-delta direnv
+# Install these tools via your package manager:
+#
+# macOS (Homebrew):
+#   brew install zoxide eza bat fd ripgrep git-delta direnv fzf
+#
+# Ubuntu/Debian:
+#   sudo apt install zoxide eza bat fd-find ripgrep git-delta direnv fzf
+#   Note: fd-find creates 'fdfind' - create alias: ln -s $(which fdfind) ~/.local/bin/fd
+#
+# Arch Linux:
+#   sudo pacman -S zoxide eza bat fd ripgrep git-delta direnv fzf
 
-# zoxide: Smarter cd (install: brew install zoxide)
+# zoxide: Smarter cd
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# direnv: Auto load environment variables (install: brew install direnv)
+# direnv: Auto load environment variables
 if command -v direnv &> /dev/null; then
   eval "$(direnv hook zsh)"
 fi
