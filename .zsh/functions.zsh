@@ -3,6 +3,67 @@
 # ═══════════════════════════════════════════════════════════════════════
 
 # ───────────────────────────────────────────────────────────────────────
+# 📚 Help & Documentation
+# ───────────────────────────────────────────────────────────────────────
+
+# Show keyboard shortcuts guide
+keys() {
+    local keybindings_file
+
+    # Try to find KEYBINDINGS.md in common locations
+    if [[ -f "$HOME/KEYBINDINGS.md" ]]; then
+        keybindings_file="$HOME/KEYBINDINGS.md"
+    elif [[ -f "$HOME/.config/KEYBINDINGS.md" ]]; then
+        keybindings_file="$HOME/.config/KEYBINDINGS.md"
+    elif [[ -f "/tmp/dotfiles_clone/KEYBINDINGS.md" ]]; then
+        keybindings_file="/tmp/dotfiles_clone/KEYBINDINGS.md"
+    else
+        echo "❌ KEYBINDINGS.md não encontrado!"
+        echo ""
+        echo "Para criar o arquivo, copie do repositório:"
+        echo "  cp /tmp/dotfiles_clone/KEYBINDINGS.md ~/KEYBINDINGS.md"
+        return 1
+    fi
+
+    # Show with bat if available (syntax highlighting), otherwise use less
+    if command -v bat &> /dev/null; then
+        bat --style=full --paging=always "$keybindings_file"
+    elif command -v batcat &> /dev/null; then
+        batcat --style=full --paging=always "$keybindings_file"
+    else
+        less "$keybindings_file"
+    fi
+}
+
+# Show quick cheat sheet of most used shortcuts
+keycheat() {
+    printf "\n\e[1;34m⌨️  Atalhos mais Usados do Terminal\e[0m\n\n"
+
+    printf "\e[1;36m🏃 Navegação entre Palavras\e[0m\n"
+    printf "  \e[33mOption + →/←\e[0m     Pular palavras\n"
+    printf "  \e[33mCtrl + a/e\e[0m       Início/Fim da linha\n\n"
+
+    printf "\e[1;36m✂️  Deletar\e[0m\n"
+    printf "  \e[33mCtrl + w\e[0m         Deleta palavra anterior\n"
+    printf "  \e[33mOption + d\e[0m       Deleta próxima palavra\n"
+    printf "  \e[33mCtrl + k\e[0m         Deleta até fim da linha\n"
+    printf "  \e[33mCtrl + u\e[0m         Deleta até início da linha\n\n"
+
+    printf "\e[1;36m📋 Clipboard\e[0m\n"
+    printf "  \e[33mCtrl + w\e[0m         Deleta e guarda\n"
+    printf "  \e[33mCtrl + y\e[0m         Cola de volta\n\n"
+
+    printf "\e[1;36m🔍 Busca\e[0m\n"
+    printf "  \e[33mCtrl + r\e[0m         Busca no histórico (fzf)\n\n"
+
+    printf "\e[1;36m🔙 Outros\e[0m\n"
+    printf "  \e[33mCtrl + _\e[0m         Desfaz última edição\n"
+    printf "  \e[33mCtrl + x, Ctrl + e\e[0m Abre no editor\n\n"
+
+    printf "\e[90mPara ver guia completo: \e[32mkeys\e[0m\n\n"
+}
+
+# ───────────────────────────────────────────────────────────────────────
 # 📂 Directory Operations
 # ───────────────────────────────────────────────────────────────────────
 
