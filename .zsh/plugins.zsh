@@ -95,3 +95,11 @@ fi
 
 # async: Async job execution
 zinit light mafredri/zsh-async
+
+# colored-man-pages: Man pages com cores
+zinit ice wait lucid
+zinit light ael-code/zsh-colored-man-pages
+
+# zsh-interactive-cd: CD interativo com fzf
+zinit ice wait lucid
+zinit light changyuheng/zsh-interactive-cd
