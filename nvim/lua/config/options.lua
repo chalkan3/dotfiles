@@ -9,7 +9,6 @@ opt.relativenumber = true          -- Relative line numbers
 opt.cursorline = true              -- Highlight current line
 opt.termguicolors = true           -- Enable 24-bit RGB colors
 opt.signcolumn = "yes"             -- Always show sign column (git, diagnostics)
-opt.colorcolumn = "80,120"         -- Column guides
 opt.scrolloff = 8                  -- Min lines to keep above/below cursor
 opt.sidescrolloff = 8              -- Min columns to keep left/right of cursor
 opt.wrap = false                   -- Don't wrap lines
