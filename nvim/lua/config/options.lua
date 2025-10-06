@@ -14,3 +14,4 @@ opt.clipboard = "unnamedplus"
 
 opt.ignorecase = true
 opt.smartcase = true
+opt.completeopt = "menu,menuone,noselect"

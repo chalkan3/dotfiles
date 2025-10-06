@@ -26,56 +26,57 @@ map("n", "<leader>bs", "<cmd>lua require'dap'.step_into()<CR>", { desc = "Step i
 map("n", "<leader>bo", "<cmd>lua require'dap'.step_out()<CR>", { desc = "Step out" })
 map("n", "<leader>br", "<cmd>lua require'dap'.repl.toggle()<CR>", { desc = "Toggle REPL" })
 map("n", "<leader>bl", "<cmd>lua require'dap'.run_last()<CR>", { desc = "Run last" })
+map("n", "<leader>h", ":nohlsearch<CR>", { desc = "Clear search highlight" })
+map("n", "<leader>q", ":q<CR>", { desc = "Quit" })
 
 
--- WhichKey setup
-local which_key = require("which-key")
-which_key.setup()
+-- WhichKey setup (deferred to ensure it loads after plugins)
+vim.defer_fn(function()
+    local ok, which_key = pcall(require, "which-key")
+    if not ok then
+        return
+    end
 
-which_key.register({
-    f = {
-        name = "Find",
-        f = { "<cmd>Telescope find_files<cr>", "Find files" },
-        g = { "<cmd>Telescope live_grep<cr>", "Live grep" },
-        b = { "<cmd>Telescope buffers<cr>", "Find buffers" },
-        h = { "<cmd>Telescope help_tags<cr>", "Help tags" },
-        m = { "<cmd>Format<cr>", "Format" },
-        p = { "<cmd>Telescope project<cr>", "Find project" },
-    },
-    b = {
-        name = "Debug",
-        p = { "<cmd>lua require'dap'.toggle_breakpoint()<CR>", "Toggle breakpoint" },
-        c = { "<cmd>lua require'dap'.continue()<CR>", "Continue" },
-        n = { "<cmd>lua require'dap'.step_over()<CR>", "Step over" },
-        s = { "<cmd>lua require'dap'.step_into()<CR>", "Step into" },
-        o = { "<cmd>lua require'dap'.step_out()<CR>", "Step out" },
-        r = { "<cmd>lua require'dap'.repl.toggle()<CR>", "Toggle REPL" },
-        l = { "<cmd>lua require'dap'.run_last()<CR>", "Run last" },
-    },
-    c = {
-        name = "Code",
-        a = { function() vim.lsp.buf.code_action() end, "Code action" },
-    },
-    r = {
-        name = "Rename",
-        n = { function() vim.lsp.buf.rename() end, "Rename" },
-    },
-    g = {
-        name = "Git",
-        j = { "<cmd>Gitsigns next_hunk<cr>", "Next Hunk" },
-        k = { "<cmd>Gitsigns prev_hunk<cr>", "Prev Hunk" },
-        s = { "<cmd>Gitsigns stage_hunk<cr>", "Stage Hunk" },
-        r = { "<cmd>Gitsigns reset_hunk<cr>", "Reset Hunk" },
-        p = { "<cmd>Gitsigns preview_hunk<cr>", "Preview Hunk" },
-    },
-    e = { "<cmd>NvimTreeToggle<cr>", "Toggle NvimTree" },
-    E = { "<cmd>NvimTreeFocus<cr>", "Focus NvimTree" },
-    t = { "<cmd>ToggleTerm<cr>", "Toggle Terminal" },
-    o = { "<cmd>SymbolsOutline<cr>", "Toggle Symbols Outline" },
-    x = {
-        name = "Trouble",
-        x = { "<cmd>TroubleToggle<cr>", "Toggle Trouble" },
-    },
-    w = { ":w<CR>", "Save" },
-    q = { ":q<CR>", "Quit" },
-}, { prefix = "<leader>" })
+    which_key.add({
+        { "<leader>f", group = "Find" },
+        { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+        { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+        { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find buffers" },
+        { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
+        { "<leader>fp", "<cmd>Telescope project<cr>", desc = "Find project" },
+
+        { "<leader>b", group = "Debug" },
+        { "<leader>bp", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", desc = "Toggle breakpoint" },
+        { "<leader>bc", "<cmd>lua require'dap'.continue()<CR>", desc = "Continue" },
+        { "<leader>bn", "<cmd>lua require'dap'.step_over()<CR>", desc = "Step over" },
+        { "<leader>bs", "<cmd>lua require'dap'.step_into()<CR>", desc = "Step into" },
+        { "<leader>bo", "<cmd>lua require'dap'.step_out()<CR>", desc = "Step out" },
+        { "<leader>br", "<cmd>lua require'dap'.repl.toggle()<CR>", desc = "Toggle REPL" },
+        { "<leader>bl", "<cmd>lua require'dap'.run_last()<CR>", desc = "Run last" },
+
+        { "<leader>c", group = "Code" },
+        { "<leader>ca", function() vim.lsp.buf.code_action() end, desc = "Code action" },
+
+        { "<leader>r", group = "Rename" },
+        { "<leader>rn", function() vim.lsp.buf.rename() end, desc = "Rename" },
+
+        { "<leader>g", group = "Git" },
+        { "<leader>gj", "<cmd>Gitsigns next_hunk<cr>", desc = "Next Hunk" },
+        { "<leader>gk", "<cmd>Gitsigns prev_hunk<cr>", desc = "Prev Hunk" },
+        { "<leader>gs", "<cmd>Gitsigns stage_hunk<cr>", desc = "Stage Hunk" },
+        { "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", desc = "Reset Hunk" },
+        { "<leader>gp", "<cmd>Gitsigns preview_hunk<cr>", desc = "Preview Hunk" },
+
+        { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Toggle NvimTree" },
+        { "<leader>E", "<cmd>NvimTreeFocus<cr>", desc = "Focus NvimTree" },
+        { "<leader>t", "<cmd>ToggleTerm<cr>", desc = "Toggle Terminal" },
+        { "<leader>o", "<cmd>SymbolsOutline<cr>", desc = "Toggle Symbols Outline" },
+
+        { "<leader>x", group = "Trouble" },
+        { "<leader>xx", "<cmd>TroubleToggle<cr>", desc = "Toggle Trouble" },
+
+        { "<leader>w", ":w<CR>", desc = "Save" },
+        { "<leader>q", group = "Quit" },
+        { "<leader>qq", ":%d<CR>", desc = "Delete all lines" },
+    })
+end, 100)

@@ -7,20 +7,20 @@ return {
     {
         "williamboman/mason.nvim",
         opts = {
-            ensure_installed = {
-                "lua_ls", "jsonls", "html", "cssls", "tsserver", "deno",
-                "pyright", "rust_analyzer", "gopls", "clangd", "jdtls", "solargraph",
-                "bashls", "yamlls", "dockerls", "marksman", "terraformls", "kotlin_language_server",
-                "phpactor", "pylsp", "r_language_server", "svelte", "tailwindcss", "vtsls",
-                "emmet_ls", "cmake", "fortran_ls", "hls", "intelephense", "metals", "omnisharp",
-                "perlpls", "powershell_es", "ruby_lsp", "taplo", "terraform_lsp", "unocss",
-                "vuels", "wgsl_analyzer", "zls", "typst_lsp", "nil_ls", "elixirls",
+            ui = {
+                border = "rounded",
+                icons = {
+                    package_installed = "✓",
+                    package_pending = "➜",
+                    package_uninstalled = "✗"
+                }
             }
         },
     },
 
     {
         "neovim/nvim-lspconfig",
+        event = "BufReadPre",
         dependencies = {
             "williamboman/mason.nvim",
             "mason-org/mason-lspconfig.nvim",
@@ -44,7 +44,6 @@ return {
             end
 
             mason_lspconfig.setup({
-                ensure_installed = {},
                 handlers = {
                     function(server_name)
                         lspconfig[server_name].setup({
@@ -88,36 +87,61 @@ return {
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-nvim-lsp-signature-help",
             "zbirenbaum/copilot-cmp",
+            "hrsh7th/cmp-nvim-lua",
+            "hrsh7th/cmp-calc",
+            "onsails/lspkind.nvim",
         },
         opts = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
+            local lspkind = require("lspkind")
             require("copilot_cmp").setup({})
 
             return {
                 completion = {
+                    completeopt = "menu,menuone,noinsert",
                 },
                 experimental = {
-                    ghost_text = true,
+                    ghost_text = {
+                        hl_group = "Comment",
+                    },
+                },
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
                 },
                 snippet = {
                     expand = function(args)
                         luasnip.lsp_expand(args.body)
                     end,
                 },
+                formatting = {
+                    format = lspkind.cmp_format({
+                        mode = "symbol_text",
+                        maxwidth = 50,
+                        ellipsis_char = "...",
+                        symbol_map = {
+                            Copilot = "",
+                        },
+                    }),
+                },
                 mapping = cmp.mapping.preset.insert({
                     ["<C-k>"] = cmp.mapping.select_prev_item(),
                     ["<C-j>"] = cmp.mapping.select_next_item(),
+                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
                     ["<CR>"] = cmp.mapping.confirm({ select = true }),
+                    ["<C-Space>"] = cmp.mapping.complete(),
                 }),
                 sources = cmp.config.sources({
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                    { name = "buffer" },
-                    { name = "path" },
-                    { name = "cmdline" },
-                    { name = "nvim_lsp_signature_help" },
-                    { name = "copilot" },
+                    { name = "copilot", priority = 1000 },
+                    { name = "nvim_lsp", priority = 900 },
+                    { name = "luasnip", priority = 800 },
+                    { name = "nvim_lua", priority = 700 },
+                    { name = "buffer", priority = 500 },
+                    { name = "path", priority = 400 },
+                    { name = "nvim_lsp_signature_help", priority = 300 },
+                    { name = "calc", priority = 200 },
                 }),
             }
         end
@@ -125,12 +149,47 @@ return {
 
     "nvim-treesitter/nvim-treesitter-textobjects",
 
-    -- Git integration
+    -- Git integration com visual aprimorado
     {
         "lewis6991/gitsigns.nvim",
-        config = function()
-            require("gitsigns").setup()
-        end,
+        event = "BufReadPost",
+        opts = {
+            signs = {
+                add          = { text = '│' },
+                change       = { text = '│' },
+                delete       = { text = '_' },
+                topdelete    = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked    = { text = '┆' },
+            },
+            signcolumn = true,
+            numhl      = false,
+            linehl     = false,
+            word_diff  = false,
+            watch_gitdir = {
+                follow_files = true
+            },
+            attach_to_untracked = true,
+            current_line_blame = false,
+            current_line_blame_opts = {
+                virt_text = true,
+                virt_text_pos = 'eol',
+                delay = 1000,
+                ignore_whitespace = false,
+            },
+            current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+            sign_priority = 6,
+            update_debounce = 100,
+            status_formatter = nil,
+            max_file_length = 40000,
+            preview_config = {
+                border = 'rounded',
+                style = 'minimal',
+                relative = 'cursor',
+                row = 0,
+                col = 1
+            },
+        },
     },
 
     -- Auto-closing pairs
@@ -150,12 +209,6 @@ return {
     },
 
     -- Code formatting
-    {
-        "mhartington/formatter.nvim",
-        config = function()
-            require("config.formatter")
-        end,
-    },
 
     -- Debugging
     {
@@ -165,15 +218,25 @@ return {
         end,
     },
 
-    -- GitHub Copilot
+    -- Mason LSP Config
     {
-        "github/copilot.vim",
-        cmd = "Copilot",
-        config = function()
-            vim.g.copilot_no_tab_map = true
-            vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
-            vim.api.nvim_set_keymap("i", "<C-K>", 'copilot#Next()', { silent = true, expr = true })
-            vim.api.nvim_set_keymap("i", "<C-H>", 'copilot#Previous()', { silent = true, expr = true })
-        end,
+        "mason-org/mason-lspconfig.nvim",
+        dependencies = { "williamboman/mason.nvim" },
+        opts = {
+            ensure_installed = {
+                "lua_ls",
+                "ts_ls",  -- TypeScript/JavaScript
+                "pyright", -- Python
+                "rust_analyzer", -- Rust
+                "gopls", -- Go
+                "clangd", -- C/C++
+                "bashls", -- Bash
+                "jsonls", -- JSON
+                "yamlls", -- YAML
+                "html", -- HTML
+                "cssls", -- CSS
+            },
+            automatic_installation = true,
+        },
     },
 }
